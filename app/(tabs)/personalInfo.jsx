@@ -5,7 +5,7 @@ import Images from "../../constants/Images";
 
 const personalInfo = () => {
   return (
-    <Container styles={"border border-red-500"}>
+    <Container>
       <View className={"items-center mt-[25px] px-[25px]"}>
         <Text className={"font-extrabold text-[#0A0A0A] text-[18px]"}>
           Autobiography
@@ -32,11 +32,9 @@ const personalInfo = () => {
           </View>
         </View>
 
-        <View className={"mt-[35px] flex-row flex-wrap mb-[40px]"}>
+        <View className={"mt-[35px] flex-row flex-wrap mb-[40px] text-justify"}>
           <Text
-            className={
-              "font-normal text-[14px] text-[#0A0A0A] text-justify border border-red-500"
-            }
+            className={"font-normal text-[14px] text-[#0A0A0A] text-justify"}
           >
             {"\t\t\t"}From a young age, I have always been curious and eager to
             explore the world around me. As a child, I constantly sought out

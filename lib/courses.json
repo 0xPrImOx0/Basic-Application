@@ -1,0 +1,79 @@
+{
+  "1": {
+    "courseCode": "IT321",
+    "courseName": "CAPSTONE Project and Research 1",
+    "courseType": "major",
+    "section": "BSIT - IT3R8",
+    "f2fSchedule": "N/A",
+    "roomDesignated": "N/A",
+    "onlineSchedule": "F\t\t7:00 - 12:00",
+    "instructor": "N/A",
+    "courseIcon": "capstone"
+  },
+  "2": {
+    "courseCode": "IT322",
+    "courseName": "Integrative Programming and Technologies",
+    "courseType": "major",
+    "section": "BSIT - IT3R8",
+    "f2fSchedule": "T\t\t13:00 - 16:00",
+    "roomDesignated": "N/A",
+    "onlineSchedule": "F\t\t13:00 - 15:00",
+    "instructor": "CITC-TBA7 CITC-TBA7",
+    "courseIcon": "ipt"
+  },
+  "3": {
+    "courseCode": "IT323",
+    "courseName": "Applications Development and Emerging Technologies",
+    "courseType": "major",
+    "section": "BSIT - IT3R8",
+    "f2fSchedule": "Th\t\t10:00 - 13:00",
+    "roomDesignated": "9-305",
+    "onlineSchedule": "M 10:00 - 12:00",
+    "instructor": "Arlene Baldelovar",
+    "courseIcon": "appdev"
+  },
+  "4": {
+    "courseCode": "IT324",
+    "courseName": "Quantitative Methods",
+    "courseType": "major",
+    "section": "BSIT - IT3R8",
+    "f2fSchedule": "M\t\t15:00 - 18:00",
+    "roomDesignated": "41-501",
+    "onlineSchedule": "F\t\t15:00 - 17:00",
+    "instructor": "Archemedes A. Lague",
+    "courseIcon": "quanmeth"
+  },
+  "5": {
+    "courseCode": "IT325",
+    "courseName": "IT Elective 2",
+    "courseType": "major",
+    "section": "BSIT - IT3R8",
+    "f2fSchedule": "M\t\t7:00 - 10:00",
+    "roomDesignated": "09-204 (CITC Lab 2)",
+    "onlineSchedule": "W\t\t13:00 - 15:00",
+    "instructor": "Love Jhoye M. Raboy",
+    "courseIcon": "elective"
+  },
+  "6": {
+    "courseCode": "PICPE",
+    "courseName": "Philippine Indigenous Communities and Peace Education",
+    "courseType": "minor",
+    "section": "BSIT - IT3R8",
+    "f2fSchedule": "Th\t\t13:30 - 15:00",
+    "roomDesignated": "28-107 (ChemBldg-Rm7)",
+    "onlineSchedule": "M\t\t13:30 - 15:00",
+    "instructor": "Althea Mae Galinada",
+    "courseIcon": "picpe"
+  },
+  "7": {
+    "courseCode": "FreeElec",
+    "courseName": "Foreign Language",
+    "courseType": "minor",
+    "section": "BSIT - IT3R8",
+    "f2fSchedule": "W\t\t10:00 - 11:30",
+    "roomDesignated": "09-202 (ICT Jeep Star)",
+    "onlineSchedule": "W\t\t15:00 - 16:30",
+    "instructor": "Armi Quitong",
+    "courseIcon": "japanese"
+  }
+}

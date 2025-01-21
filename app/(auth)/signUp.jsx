@@ -78,7 +78,7 @@ const signIn = () => {
           />
 
           <FormField
-            formHeader={"Confirm"}
+            formHeader={"Confirm Password"}
             placeholder={"Confirm your Password"}
             value={form.confirmPassword}
             handleChangeText={(e) => setForm({ ...form, confirmPassword: e })}

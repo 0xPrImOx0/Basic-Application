@@ -5,6 +5,9 @@ import x from "../assets/images/x.png";
 import check from "../assets/images/check.png";
 import eye from "../assets/images/eye.png";
 import eyeHide from "../assets/images/eyeHide.png";
+import biography from "../assets/images/biography.png";
+import arrow from "../assets/images/arrow.png";
+import event from "../assets/images/event.png";
 
 export default {
   homes,
@@ -14,4 +17,7 @@ export default {
   check,
   eye,
   eyeHide,
+  biography,
+  arrow,
+  event,
 };

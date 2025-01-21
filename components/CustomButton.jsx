@@ -2,6 +2,7 @@ import { Text, Image, TouchableOpacity, Keyboard } from "react-native";
 import React from "react";
 
 const CustomButton = ({
+  children,
   label,
   icon,
   styles,
@@ -10,6 +11,7 @@ const CustomButton = ({
   disabled,
   textStyle,
   iconStyle,
+  extraIconStyle,
   onPressOut,
 }) => {
   return (
@@ -23,9 +25,10 @@ const CustomButton = ({
       {icon ? (
         <Image
           source={icon}
-          className={`h-7 w-7 ${iconStyle}`}
+          className={`${iconStyle}`}
           resizeMode="contain"
           tintColor={iconTint}
+          style={extraIconStyle}
         />
       ) : (
         ""
@@ -38,6 +41,8 @@ const CustomButton = ({
       ) : (
         ""
       )}
+
+      {children}
     </TouchableOpacity>
   );
 };

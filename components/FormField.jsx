@@ -61,6 +61,7 @@ const FormField = ({
             }
             styles={"mr-[15px] ml-[5px]"}
             iconTint={"#0A0A0A"}
+            iconStyle={"w-7 h-7"}
           />
         ) : (
           ""
