@@ -22,7 +22,6 @@ const signIn = () => {
             Login or create an account to continue
           </Text>
         </View>
-
         <View
           className={
             "flex-row justify-between bg-[#d9d9d9] rounded-[5px] w-[320px] mt-[20px]"
@@ -69,7 +68,6 @@ const signIn = () => {
           styles="w-full bg-[#161515] h-[43px] text-[14px] mb-[20px]"
           textStyle="font-medium text-[#fff]"
         />
-
         <Text className={"font-light text-[14px] text-[#6C6C6C] text-justify"}>
           By continuing, you agree to our Terms of Service and Privacy Policy.
         </Text>

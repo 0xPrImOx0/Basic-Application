@@ -1,6 +1,5 @@
 import { View, TextInput, Text, Image } from "react-native";
 import React, { useState } from "react";
-import { TouchableOpacity } from "react-native";
 import Icons from "../constants/Icons";
 import CustomButton from "./CustomButton";
 

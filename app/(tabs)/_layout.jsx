@@ -1,22 +1,21 @@
 import React from "react";
 import { Stack, Tabs } from "expo-router";
-import { View, Image, Text } from "react-native";
+import { View, Image, Text, TouchableOpacity } from "react-native";
 import Icons from "../../constants/Icons";
 
 const TabIcon = ({ icon, color, name, focused }) => {
   return (
-    <View className="items-center justify-center">
+    <View className="items-center justify-center w-[90px] ">
       <Image
         source={icon}
         resizeMode="contain"
         tintColor={color}
-        className={`w-6 h-6 relative ${focused ? "top-[-5px] w-7 h-7" : ""}`}
+        className={`w-7 h-7 relative ${focused ? "w-8 h-8" : ""}`}
       />
       <Text
-        className={`${
-          focused ? "font-bold text-[12px]" : "font-normal text-[10px]"
+        className={`text-[#6C6C6C] text-[14px]  ${
+          focused ? "font-bold text-[#5CB88F]" : "font-normal"
         }`}
-        style={{ color: "green" }}
       >
         {name}
       </Text>
@@ -29,14 +28,21 @@ const TabsLayout = () => {
     <Tabs
       screenOptions={{
         tabBarShowLabel: false,
-        tabBarActiveTintColor: "#1F41BB",
-        tabBarInactiveTintColor: "#ECECEC",
+        tabBarActiveTintColor: "#5CB88F",
+        tabBarInactiveTintColor: "#090909",
         tabBarStyle: {
-          backgroundColor: "#161622",
-          borderTopWidth: 3,
-          borderTopColor: "#000",
-          height: 80,
+          backgroundColor: "#FFFFFF",
+          borderTopWidth: 1,
+          borderTopColor: "#090909",
+          height: 100,
+          paddingInline: 50,
+          paddingTop: 20,
         },
+        tabBarButton: (props) => (
+          <TouchableOpacity {...props} activeOpacity={0.5}>
+            <View>{props.children}</View>
+          </TouchableOpacity>
+        ),
       }}
     >
       <Tabs.Screen
@@ -63,7 +69,7 @@ const TabsLayout = () => {
             <TabIcon
               icon={Icons.book}
               color={color}
-              name="About"
+              name="Personal Info"
               focused={focused}
             />
           ),
@@ -72,8 +78,10 @@ const TabsLayout = () => {
       <Tabs.Screen
         name="settings"
         options={{
-          headerShown: false,
+          headerShown: true,
           title: "Settings",
+          headerTintColor: "#0A0A0A",
+          headerTitleAlign: "center",
           tabBarIcon: ({ color, focused }) => (
             <TabIcon
               icon={Icons.setting}
