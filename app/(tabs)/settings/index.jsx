@@ -15,10 +15,10 @@ const settings = () => {
             label="Rey Daug"
             fontStyle={"font-extrabold"}
             subLabel={"Manage account info and security"}
-            icon={Images.studGrad}
+            icon={Images.daugCrop}
             imageStyle={"w-[50px] h-[50px] rounded-full"}
             arrowDirection="right"
-            onClick={() => router.push("/manageAccount")}
+            onClick={() => router.push("/settings/manageAccount")}
           />
         </View>
 

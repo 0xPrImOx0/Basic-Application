@@ -11,6 +11,13 @@ import event from "../assets/images/event.png";
 import plus from "../assets/images/plus.png";
 import del from "../assets/images/delete.png";
 import close from "../assets/images/close.png";
+import email from "../assets/images/email.png";
+import telephone from "../assets/images/telephone.png";
+import location from "../assets/images/location.png";
+import gradCap from "../assets/images/gradCap.png";
+import edit from "../assets/images/edit.png";
+import key from "../assets/images/key.png";
+import logout from "../assets/images/logout.png";
 
 export default {
   homes,
@@ -26,4 +33,11 @@ export default {
   plus,
   del,
   close,
+  email,
+  telephone,
+  location,
+  gradCap,
+  edit,
+  key,
+  logout,
 };

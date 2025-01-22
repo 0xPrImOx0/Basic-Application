@@ -10,7 +10,7 @@ import CustomButton from "../../components/CustomButton";
 const AbsoluteGallery = ({ close, hide }) => {
   return (
     <View
-      className={`absolute top-1/2 left-1/2 -translate-x-[50%] -translate-y-[50%] w-[350px] p-[10px] border border-[#D9D9D9] rounded-[5px] bg-[#D9D9D9] h-[550px] ${hide}`}
+      className={`absolute top-1/2 left-1/2 -translate-x-[50%] -translate-y-[50%] w-[370px] p-[20px] border border-[#D9D9D9] rounded-[10px] bg-[#D9D9D9] h-[550px] ${hide}`}
     >
       <View className="flex-row justify-between mb-[20px] items-center">
         <Text className={"font-bold text-[16px] text-[#0A0A0A]"}>

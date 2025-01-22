@@ -78,7 +78,7 @@ const TabsLayout = () => {
       <Tabs.Screen
         name="settings"
         options={{
-          headerShown: true,
+          headerShown: false,
           title: "Settings",
           headerTintColor: "#0A0A0A",
           headerTitleAlign: "center",

@@ -24,13 +24,13 @@ const CourseCard = ({
       <View className={"mb-[13px]"}>
         <Image
           source={courseIcon}
-          className={"w-full h-[110px] rounded-[2px] border border-slate-500"}
+          className={"w-full h-[200px] rounded-[2px] border border-slate-500"}
           style={{ resizeMode: "stretch" }}
         />
         <CustomButton
           icon={Icons.close}
           iconTint={"#FF0004"}
-          styles={"w-[15px] h-[15px] absolute left-[355px] top-[-100px]"}
+          styles={"w-[15px] h-[15px] absolute left-[355px] top-[-190px]"}
           iconStyle={"w-[20px] h-[20px]"}
           onPress={onPress}
         />
