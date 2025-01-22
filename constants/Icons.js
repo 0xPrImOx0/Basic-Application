@@ -8,6 +8,9 @@ import eyeHide from "../assets/images/eyeHide.png";
 import biography from "../assets/images/biography.png";
 import arrow from "../assets/images/arrow.png";
 import event from "../assets/images/event.png";
+import plus from "../assets/images/plus.png";
+import del from "../assets/images/delete.png";
+import close from "../assets/images/close.png";
 
 export default {
   homes,
@@ -20,4 +23,7 @@ export default {
   biography,
   arrow,
   event,
+  plus,
+  del,
+  close,
 };

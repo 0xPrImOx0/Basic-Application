@@ -9,9 +9,15 @@ const SubjectCards = ({
   courseName,
   courseSched1,
   courseSched2,
+  onPress,
+  disabled,
 }) => {
   return (
-    <CustomButton styles="border border-[#D9D9D9] w-[170px] rounded-[5px] p-[15px] flex-col mb-[25px]">
+    <CustomButton
+      styles="border border-[#D9D9D9] w-[170px] rounded-[5px] p-[15px] flex-col mb-[25px]"
+      onPress={onPress}
+      disabled={disabled}
+    >
       <View className="mb-[15px] rounded-[2px] items-center justify-center">
         <Image
           source={courseIcon}

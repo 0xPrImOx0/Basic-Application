@@ -12,6 +12,11 @@ const Container = ({
   pt,
   centerContent,
   centerHorizontal,
+  viewStyle,
+  display,
+  direction,
+  wraps,
+  justify,
 }) => {
   return (
     <SafeAreaView className={`bg-[${bg}] h-full flex-1 ${styles}`}>
@@ -28,9 +33,12 @@ const Container = ({
               position: "relative",
               paddingBottom: pb,
               backgroundColor: bg,
-              justifyContent: centerContent ? "center" : null,
+              justifyContent: centerContent ? "center" : justify,
               alignItems: centerHorizontal ? "center" : null,
               paddingTop: pt,
+              display: display,
+              flexDirection: direction,
+              flexWrap: wraps,
             }}
           >
             {children}
@@ -38,7 +46,7 @@ const Container = ({
         </KeyboardAvoidingView>
       ) : (
         <View
-          className={`min-h-[100%] px-[14px] relative pb-[${pb}] ${styles}`}
+          className={`min-h-[100%] px-[14px] relative pb-[${pb}] ${styles} ${viewStyle}`}
         >
           {children}
         </View>

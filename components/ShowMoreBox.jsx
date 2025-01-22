@@ -6,9 +6,15 @@ import Icons from "../constants/Icons";
 const ShowMoreBox = ({
   children,
   label,
+  fontStyle,
+  subLabel,
   icon,
+  imageStyle,
   arrowDirection = "bottom",
   styles,
+  borderStyle,
+  onClick,
+  disabled,
 }) => {
   const [rotate, setRotate] = useState("90deg");
 
@@ -17,19 +23,35 @@ const ShowMoreBox = ({
   };
   return (
     <View
-      className={"p-[12px] rounded-[5px] border border-[#D9D9D9] my-[20px]"}
+      className={`p-[12px] rounded-[5px] border border-[#D9D9D9] my-[20px] ${borderStyle}`}
     >
       <View className="flex-row justify-between">
         <View className={"flex-row justify-between items-center"}>
           {icon ? (
-            <Image source={icon} className={"w-[40px] h-[40px] mr-[18px]"} />
+            <Image
+              source={icon}
+              className={`w-[40px] h-[40px] mr-[18px] ${imageStyle}`}
+            />
           ) : (
             ""
           )}
 
-          <Text className={"font-medium text-[16px] text-[#0A0A0A]"}>
-            {label}
-          </Text>
+          {subLabel ? (
+            <View>
+              <Text
+                className={`font-medium text-[16px] text-[#0A0A0A] ${fontStyle}`}
+              >
+                {label}
+              </Text>
+              <Text className={"font-light italic text-[12px] text-[#6C6C6C]"}>
+                {subLabel}
+              </Text>
+            </View>
+          ) : (
+            <Text className={"font-medium text-[16px] text-[#0A0A0A]"}>
+              {label}
+            </Text>
+          )}
         </View>
 
         {arrowDirection === "right" ? (
@@ -37,6 +59,8 @@ const ShowMoreBox = ({
             icon={Icons.arrow}
             iconStyle="w-[30px] h-[30px]"
             styles=""
+            onPress={onClick}
+            disabled={disabled}
           />
         ) : arrowDirection === "bottom" ? (
           <CustomButton
