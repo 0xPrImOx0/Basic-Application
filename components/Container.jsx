@@ -11,6 +11,7 @@ const Container = ({
   ph,
   pt,
   centerContent,
+  savStyles,
   centerHorizontal,
   viewStyle,
   display,
@@ -19,12 +20,12 @@ const Container = ({
   justify,
 }) => {
   return (
-    <SafeAreaView className={`bg-[${bg}] h-full flex-1 ${styles}`}>
-      {scroll ? (
-        <KeyboardAvoidingView
-          className={"flex-1 justify-center"}
-          behavior={Platform.OS === "ios" ? "padding" : "height"}
-        >
+    <SafeAreaView className={`bg-[${bg}] h-full flex-1 ${savStyles}`}>
+      <KeyboardAvoidingView
+        className={"flex-1 justify-center"}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+      >
+        {scroll ? (
           <ScrollView
             keyboardShouldPersistTaps="handled"
             contentContainerStyle={{
@@ -43,14 +44,14 @@ const Container = ({
           >
             {children}
           </ScrollView>
-        </KeyboardAvoidingView>
-      ) : (
-        <View
-          className={`min-h-[100%] px-[14px] relative pb-[${pb}] ${styles} ${viewStyle}`}
-        >
-          {children}
-        </View>
-      )}
+        ) : (
+          <View
+            className={`min-h-[100%] px-[14px] relative pb-[${pb}] ${styles} ${viewStyle}`}
+          >
+            {children}
+          </View>
+        )}
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 };

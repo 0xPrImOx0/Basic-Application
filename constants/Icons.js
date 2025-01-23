@@ -1,3 +1,4 @@
+import logo from "../assets/images/logo.png";
 import homes from "../assets/images/homes.png";
 import book from "../assets/images/book.png";
 import setting from "../assets/images/setting.png";
@@ -20,6 +21,7 @@ import key from "../assets/images/key.png";
 import logout from "../assets/images/logout.png";
 
 export default {
+  logo,
   homes,
   book,
   setting,
