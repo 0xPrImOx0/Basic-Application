@@ -13,7 +13,7 @@ import * as ImagePicker from "expo-image-picker";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { Picker } from "@react-native-picker/picker";
 
-const SubjectViewForm = () => {
+const addSubject = () => {
   const [formData, setFormData] = useState({
     icon: null,
     courseCode: "",
@@ -326,4 +326,4 @@ const SubjectViewForm = () => {
   );
 };
 
-export default SubjectViewForm;
+export default addSubject;
