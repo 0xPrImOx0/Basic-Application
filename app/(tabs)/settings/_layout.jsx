@@ -56,6 +56,76 @@ const SettingsLayout = () => {
           ),
         }}
       />
+      <Stack.Screen
+        name="addSubject"
+        options={{
+          title: "Add Account",
+          header: () => (
+            <View
+              className={
+                "bg-[#FFFFFF] py-[10px] flex-row border-b-2 border-[#d9d9d9] justify-center items-center relative pb-[10px]"
+              }
+            >
+              <View className={"absolute left-[10px]"}>
+                <CustomButton
+                  label="Back"
+                  icon={Icons.arrow}
+                  iconTint={"#0A0A0A"}
+                  onPress={() => router.back()}
+                  textStyle={"text-start"}
+                  iconStyle={"w-[20px] h-[20px] rotate-180 mr-[5px]"}
+                />
+              </View>
+
+              <View className={"items-center"}>
+                <Text className={"font-extrabold text-[17px] text-[#0A0A0A]"}>
+                  Settings
+                </Text>
+                <Text
+                  className={"font-light italic text-[12px] text-[#6c6c6c]"}
+                >
+                  Add Subject
+                </Text>
+              </View>
+            </View>
+          ),
+        }}
+      />
+      <Stack.Screen
+        name="delSubject"
+        options={{
+          title: "Delete Account",
+          header: () => (
+            <View
+              className={
+                "bg-[#FFFFFF] py-[10px] flex-row border-b-2 border-[#d9d9d9] justify-center items-center relative pb-[10px]"
+              }
+            >
+              <View className={"absolute left-[10px]"}>
+                <CustomButton
+                  label="Back"
+                  icon={Icons.arrow}
+                  iconTint={"#0A0A0A"}
+                  onPress={() => router.back()}
+                  textStyle={"text-start"}
+                  iconStyle={"w-[20px] h-[20px] rotate-180 mr-[5px]"}
+                />
+              </View>
+
+              <View className={"items-center"}>
+                <Text className={"font-extrabold text-[17px] text-[#0A0A0A]"}>
+                  Settings
+                </Text>
+                <Text
+                  className={"font-light italic text-[12px] text-[#6c6c6c]"}
+                >
+                  Delete Subject
+                </Text>
+              </View>
+            </View>
+          ),
+        }}
+      />
     </Stack>
   );
 };

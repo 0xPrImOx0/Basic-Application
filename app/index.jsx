@@ -12,7 +12,7 @@ export default function Index() {
   const SplashScreen = () => {
     return (
       <View
-        className={`flex-1 items-center justify-center w-full h-full ${
+        className={`flex-1 items-center justify-center w-full h-full bg-[#fff] ${
           isVisible ? "" : "hidden"
         }`}
       >

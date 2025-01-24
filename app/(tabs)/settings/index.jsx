@@ -30,6 +30,7 @@ const settings = () => {
             imageStyle={"w-[50px] h-[50px] rounded-full"}
             arrowDirection="right"
             borderStyle={"border-0 my-0 mb-[10px]"}
+            onClick={() => router.push("/settings/addSubject")}
           />
 
           <ShowMoreBox
@@ -39,6 +40,7 @@ const settings = () => {
             imageStyle={"w-[50px] h-[50px] rounded-full"}
             arrowDirection="right"
             borderStyle={"border-0 my-0"}
+            onClick={() => router.push("/settings/delSubject")}
           />
         </View>
       </View>

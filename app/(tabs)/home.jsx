@@ -7,6 +7,7 @@ import SubjectCards from "../../components/SubjectCards";
 import courses from "../../lib/courses.json";
 import Container from "../../components/Container";
 import CourseCard from "../../components/CourseCard";
+import CustomButton from "../../components/CustomButton";
 
 const home = () => {
   const oddCourses = Object.keys(courses)
