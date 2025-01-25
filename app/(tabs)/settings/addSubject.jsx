@@ -13,25 +13,36 @@ import * as ImagePicker from "expo-image-picker";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { Picker } from "@react-native-picker/picker";
 
-const addSubject = () => {
+const WEEKDAYS = [
+  "Monday",
+  "Tuesday",
+  "Wednesday",
+  "Thursday",
+  "Friday",
+  "Saturday",
+  "Sunday",
+];
+
+const SubjectViewForm = () => {
   const [formData, setFormData] = useState({
     icon: null,
     courseCode: "",
     courseName: "",
     courseType: "major",
     section: "",
-    f2fScheduleDate: new Date(),
+    f2fScheduleDay: "Monday",
     f2fScheduleTime: new Date(),
     room: "",
-    onlineScheduleDate: new Date(),
+    onlineScheduleDay: "Monday",
     onlineScheduleTime: new Date(),
     instructor: "",
   });
 
+  const formatTime = (date) =>
+    date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+
   const [showDatePickers, setShowDatePickers] = useState({
-    f2fDate: false,
     f2fTime: false,
-    onlineDate: false,
     onlineTime: false,
   });
 
@@ -74,29 +85,28 @@ const addSubject = () => {
     }
   }, []);
 
-  const handleDateChange = (type, event, selectedDate) => {
-    if (event.type === "set") {
-      const currentDate = selectedDate || formData[type];
-      setShowDatePickers({
-        f2fDate: false,
-        f2fTime: false,
-        onlineDate: false,
-        onlineTime: false,
-      });
-      setFormData((prev) => ({ ...prev, [type]: currentDate }));
-    } else {
-      setShowDatePickers({
-        f2fDate: false,
-        f2fTime: false,
-        onlineDate: false,
-        onlineTime: false,
-      });
+  const deleteIcon = () => {
+    setFormData((prev) => ({
+      ...prev,
+      icon: null,
+    }));
+  };
+
+  const handleTimeChange = (key, event, selectedDate) => {
+    if (selectedDate) {
+      setFormData((prev) => ({
+        ...prev,
+        [key]: selectedDate,
+      }));
+      setShowDatePickers((prev) => ({
+        ...prev,
+        [key === "f2fScheduleTime" ? "f2fTime" : "onlineTime"]: false,
+      }));
     }
   };
 
   const handleSubmit = () => {
     console.log(formData);
-    // Add submission logic
   };
 
   return (
@@ -107,19 +117,36 @@ const addSubject = () => {
           <Text className="text-lg font-bold text-gray-800 mb-2">
             Subject Icon
           </Text>
-          {formData.icon && (
-            <Image
-              source={{ uri: formData.icon }}
-              className="w-full h-64"
-              resizeMode="contain"
-            />
+          {formData.icon ? (
+            <View>
+              <Image
+                source={{ uri: formData.icon }}
+                className="w-full h-64 rounded-md mb-2"
+                resizeMode="contain"
+              />
+              <View className="flex-row justify-between">
+                <TouchableOpacity
+                  onPress={pickImage}
+                  className="bg-blue-500 flex-1 mr-2 p-2 rounded-md"
+                >
+                  <Text className="text-white text-center">Change Icon</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={deleteIcon}
+                  className="bg-red-500 flex-1 p-2 rounded-md"
+                >
+                  <Text className="text-white text-center">Delete Icon</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          ) : (
+            <TouchableOpacity
+              onPress={pickImage}
+              className="bg-blue-500 p-2 rounded-md"
+            >
+              <Text className="text-white text-center">Upload Icon</Text>
+            </TouchableOpacity>
           )}
-          <TouchableOpacity
-            onPress={pickImage}
-            className="bg-blue-500 p-2 rounded-md mt-2"
-          >
-            <Text className="text-white text-center">Upload Icon</Text>
-          </TouchableOpacity>
         </View>
 
         {/* Course Details */}
@@ -137,7 +164,7 @@ const addSubject = () => {
           />
 
           <Text className="text-sm font-medium text-gray-700 mb-1">
-            Course Name
+            Course Na me
           </Text>
           <TextInput
             className="border border-gray-300 rounded-md p-2 mb-3 bg-white"
@@ -185,29 +212,36 @@ const addSubject = () => {
           <View className="flex-row justify-between mb-3">
             <View className="flex-1 mr-2">
               <Text className="text-sm font-medium text-gray-700 mb-1">
-                Date
+                Day
               </Text>
-              <TouchableOpacity
-                onPress={() =>
-                  setShowDatePickers((prev) => ({ ...prev, f2fDate: true }))
-                }
-                className="border border-gray-300 p-2 rounded-md"
-              >
-                <Text>{formData.f2fScheduleDate.toLocaleDateString()}</Text>
-              </TouchableOpacity>
+              <View className="border border-gray-300 rounded-md bg-white">
+                <Picker
+                  selectedValue={formData.f2fScheduleDay}
+                  onValueChange={(itemValue) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      f2fScheduleDay: itemValue,
+                    }))
+                  }
+                >
+                  {WEEKDAYS.map((day) => (
+                    <Picker.Item key={day} label={day} value={day} />
+                  ))}
+                </Picker>
+              </View>
             </View>
             <View className="flex-1">
               <Text className="text-sm font-medium text-gray-700 mb-1">
                 Time
               </Text>
-              <TouchableOpacity
-                onPress={() =>
+              <TextInput
+                className="border border-gray-300 rounded-md p-2 bg-white flex-1"
+                value={formatTime(formData.f2fScheduleTime)} // Format Date object
+                onFocus={() =>
                   setShowDatePickers((prev) => ({ ...prev, f2fTime: true }))
                 }
-                className="border border-gray-300 p-2 rounded-md"
-              >
-                <Text>{formData.f2fScheduleTime.toLocaleTimeString()}</Text>
-              </TouchableOpacity>
+                placeholder="HH:MM"
+              />
             </View>
           </View>
 
@@ -230,29 +264,36 @@ const addSubject = () => {
           <View className="flex-row justify-between mb-3">
             <View className="flex-1 mr-2">
               <Text className="text-sm font-medium text-gray-700 mb-1">
-                Date
+                Day
               </Text>
-              <TouchableOpacity
-                onPress={() =>
-                  setShowDatePickers((prev) => ({ ...prev, onlineDate: true }))
-                }
-                className="border border-gray-300 p-2 rounded-md"
-              >
-                <Text>{formData.onlineScheduleDate.toLocaleDateString()}</Text>
-              </TouchableOpacity>
+              <View className="border border-gray-300 rounded-md bg-white">
+                <Picker
+                  selectedValue={formData.onlineScheduleDay}
+                  onValueChange={(itemValue) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      onlineScheduleDay: itemValue,
+                    }))
+                  }
+                >
+                  {WEEKDAYS.map((day) => (
+                    <Picker.Item key={day} label={day} value={day} />
+                  ))}
+                </Picker>
+              </View>
             </View>
             <View className="flex-1">
               <Text className="text-sm font-medium text-gray-700 mb-1">
                 Time
               </Text>
-              <TouchableOpacity
-                onPress={() =>
+              <TextInput
+                className="border border-gray-300 rounded-md p-2 bg-white"
+                value={formatTime(formData.onlineScheduleTime)} // Format Date object
+                onFocus={() =>
                   setShowDatePickers((prev) => ({ ...prev, onlineTime: true }))
                 }
-                className="border border-gray-300 p-2 rounded-md"
-              >
-                <Text>{formData.onlineScheduleTime.toLocaleTimeString()}</Text>
-              </TouchableOpacity>
+                placeholder="HH:MM"
+              />
             </View>
           </View>
         </View>
@@ -280,34 +321,13 @@ const addSubject = () => {
           <Text className="text-white font-bold">Create Subject</Text>
         </TouchableOpacity>
 
-        {/* Date Pickers */}
-        {showDatePickers.f2fDate && (
-          <DateTimePicker
-            value={formData.f2fScheduleDate}
-            mode="date"
-            display="default"
-            onChange={(event, selectedDate) =>
-              handleDateChange("f2fScheduleDate", event, selectedDate)
-            }
-          />
-        )}
         {showDatePickers.f2fTime && (
           <DateTimePicker
             value={formData.f2fScheduleTime}
             mode="time"
             display="default"
             onChange={(event, selectedDate) =>
-              handleDateChange("f2fScheduleTime", event, selectedDate)
-            }
-          />
-        )}
-        {showDatePickers.onlineDate && (
-          <DateTimePicker
-            value={formData.onlineScheduleDate}
-            mode="date"
-            display="default"
-            onChange={(event, selectedDate) =>
-              handleDateChange("onlineScheduleDate", event, selectedDate)
+              handleTimeChange("f2fScheduleTime", event, selectedDate)
             }
           />
         )}
@@ -317,7 +337,7 @@ const addSubject = () => {
             mode="time"
             display="default"
             onChange={(event, selectedDate) =>
-              handleDateChange("onlineScheduleTime", event, selectedDate)
+              handleTimeChange("onlineScheduleTime", event, selectedDate)
             }
           />
         )}
@@ -326,4 +346,4 @@ const addSubject = () => {
   );
 };
 
-export default addSubject;
+export default SubjectViewForm;
