@@ -23,9 +23,7 @@ const ShowMoreBox = ({
     setRotate(rotate === "90deg" ? "270deg" : "90deg");
   };
   return (
-    <View
-      className={`p-[12px] rounded-[5px] border border-[#D9D9D9] my-[20px] ${borderStyle}`}
-    >
+    <View className={`p-3 rounded-md border border-[#D9D9D9] ${borderStyle}`}>
       <CustomButton
         onPress={onClick || handleRotation}
         styles={"flex-col justify-between w-full item-center justify-center"}
@@ -33,10 +31,7 @@ const ShowMoreBox = ({
         <View className="flex-row justify-between w-full">
           <View className={"flex-row justify-between items-center"}>
             {icon ? (
-              <Image
-                source={icon}
-                className={`w-[40px] h-[40px] mr-[18px] ${imageStyle}`}
-              />
+              <Image source={icon} className={`w-12 h-12 mr-3 ${imageStyle}`} />
             ) : (
               ""
             )}
@@ -44,18 +39,16 @@ const ShowMoreBox = ({
             {subLabel ? (
               <View>
                 <Text
-                  className={`font-medium text-[16px] text-[#0A0A0A] ${fontStyle}`}
+                  className={`font-medium text-lg text-[#0A0A0A] ${fontStyle}`}
                 >
                   {label}
                 </Text>
-                <Text
-                  className={"font-light italic text-[12px] text-[#6C6C6C]"}
-                >
+                <Text className={"font-light italic text-sm text-[#6C6C6C]"}>
                   {subLabel}
                 </Text>
               </View>
             ) : (
-              <Text className={"font-medium text-[16px] text-[#0A0A0A]"}>
+              <Text className={"font-medium text-lg text-[#0A0A0A]"}>
                 {label}
               </Text>
             )}
@@ -64,7 +57,7 @@ const ShowMoreBox = ({
           {arrowDirection === "right" ? (
             <CustomButton
               icon={Icons.arrow}
-              iconStyle="w-[30px] h-[30px]"
+              iconStyle="w-7 h-7"
               styles=""
               onPress={onClick}
               disabled={disabled}
@@ -72,7 +65,7 @@ const ShowMoreBox = ({
           ) : arrowDirection === "bottom" ? (
             <CustomButton
               icon={Icons.arrow}
-              iconStyle="w-[30px] h-[30px]"
+              iconStyle="w-7 h-7"
               extraIconStyle={{ transform: [{ rotate: rotate }] }}
               styles=""
               onPress={handleRotation}

@@ -1,7 +1,10 @@
-import { View, Text, Image } from "react-native";
 import React from "react";
-import Icons from "../constants/Icons";
+import { View, Text, TouchableOpacity, Image, Dimensions } from "react-native";
 import CustomButton from "./CustomButton";
+import Icons from "../constants/Icons";
+
+// Get screen dimensions for responsive design
+const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
 const CourseCard = ({
   courseIcon,
@@ -16,122 +19,83 @@ const CourseCard = ({
   onPress,
 }) => {
   return (
-    <View
-      className={
-        "border border-[#D9D9D9] bg-[#D9D9D9] rounded-[5px] w-[400px] p-[10px] absolute top-1/2 left-1/2 -translate-x-[50%] -translate-y-[50%]"
-      }
-    >
-      <View className={"mb-[13px]"}>
-        <Image
-          source={courseIcon}
-          className={"w-full h-[200px] rounded-[2px] border border-slate-500"}
-          style={{ resizeMode: "stretch" }}
-        />
+    <View className="absolute top-0 left-0 right-0 bottom-0 justify-center items-center bg-black/10">
+      <View
+        className="w-[90%] bg-white rounded-2xl shadow-lg shadow-black/20 overflow-hidden"
+        style={{ width: SCREEN_WIDTH * 0.9 }}
+      >
+        {/* Large Centered Icon */}
+        <View
+          className="self-center justify-center items-center bg-gray-100 rounded-b-2xl"
+          style={{
+            width: SCREEN_WIDTH * 0.5,
+            height: SCREEN_WIDTH * 0.5,
+          }}
+        >
+          {courseIcon ? (
+            <Image
+              source={courseIcon}
+              className="w-[80%] h-[80%] rounded-2xl"
+              resizeMode="cover"
+            />
+          ) : (
+            <View className="w-[80%] h-[80%] bg-gray-200 rounded-2xl justify-center items-center">
+              <Text className="text-4xl font-bold text-gray-600">
+                {courseCode.substring(0, 2)}
+              </Text>
+            </View>
+          )}
+        </View>
+
+        {/* Close Button */}
         <CustomButton
           icon={Icons.close}
           iconTint={"#FF0004"}
-          styles={"w-[15px] h-[15px] absolute left-[355px] top-[-190px]"}
-          iconStyle={"w-[20px] h-[20px]"}
+          styles={"absolute left-[88%] top-[-30%] w-7 h-7"}
+          iconStyle={"w-7 h-7"}
           onPress={onPress}
         />
-      </View>
 
-      <View>
-        <View className={"mb-[2px] flex-row"}>
-          <Text className={"font-extrabold text-[14px] text-[#0A0A0A]"}>
-            Course Code:
-          </Text>
-          <Text
-            className={
-              "font-normal text-[14px] text-[#0A0A0A] flex-1 pl-[50px]"
-            }
-          >
-            {`${courseCode}`}
-          </Text>
-        </View>
-        <View className={"mb-[2px] flex-row"}>
-          <Text className={"font-extrabold text-[14px] text-[#0A0A0A]"}>
-            Course Name:
-          </Text>
-          <Text
-            className={
-              "font-normal text-[14px] text-[#0A0A0A] flex-1 pl-[45px]"
-            }
-          >
-            {`${courseName}`}
-          </Text>
-        </View>
-        <View className={"mb-[2px] flex-row"}>
-          <Text className={"font-extrabold text-[14px] text-[#0A0A0A]"}>
-            Course Type:
-          </Text>
-          <Text
-            className={
-              "font-normal text-[14px] text-[#0A0A0A] flex-1 pl-[55px]"
-            }
-          >
-            {`${courseType}`}
-          </Text>
-        </View>
-        <View className={"mb-[2px] flex-row"}>
-          <Text className={"font-extrabold text-[14px] text-[#0A0A0A]"}>
-            Section:
-          </Text>
-          <Text
-            className={
-              "font-normal text-[14px] text-[#0A0A0A] flex-1 pl-[85px]"
-            }
-          >
-            {`${section}`}
-          </Text>
-        </View>
-        <View className={"mb-[2px] flex-row"}>
-          <Text className={"font-extrabold text-[14px] text-[#0A0A0A]"}>
-            F2F Schedule:
-          </Text>
-          <Text
-            className={
-              "font-normal text-[14px] text-[#0A0A0A] flex-1 pl-[50px]"
-            }
-          >
-            {`${f2fSchedule}`}
-          </Text>
-        </View>
-        <View className={"mb-[2px] flex-row"}>
-          <Text className={"font-extrabold text-[14px] text-[#0A0A0A]"}>
-            Room Designated:
-          </Text>
-          <Text
-            className={
-              "font-normal text-[14px] text-[#0A0A0A] flex-1 pl-[20px]"
-            }
-          >
-            {roomDesignated}
-          </Text>
-        </View>
-        <View className={"mb-[2px] flex-row"}>
-          <Text className={"font-extrabold text-[14px] text-[#0A0A0A]"}>
-            Online Schedule:
-          </Text>
-          <Text
-            className={
-              "font-normal text-[14px] text-[#0A0A0A] flex-1 pl-[30px]"
-            }
-          >
-            {`${onlineSchedule}`}
-          </Text>
-        </View>
-        <View className={"flex-row"}>
-          <Text className={"font-extrabold text-[14px] text-[#0A0A0A]"}>
-            Instructor:
-          </Text>
-          <Text
-            className={
-              "font-normal text-[14px] text-[#0A0A0A] flex-1 pl-[70px]"
-            }
-          >
-            {`${instructor}`}
-          </Text>
+        {/* Course Details Container */}
+        <View className="p-5">
+          <View className="items-center mb-5 pb-4 border-b border-gray-200">
+            <Text className="text-2xl font-bold text-gray-800 mb-2">
+              {courseCode}
+            </Text>
+            <Text
+              className="text-xl text-gray-600 text-center"
+              numberOfLines={2}
+            >
+              {courseName}
+            </Text>
+          </View>
+
+          {/* Detailed Information Grid */}
+          <View>
+            {[
+              {
+                label: "Course Type",
+                value: courseType.charAt(0).toUpperCase() + courseType.slice(1),
+              },
+              { label: "Section", value: section },
+              { label: "F2F Schedule", value: f2fSchedule },
+              { label: "Room", value: roomDesignated },
+              { label: "Online Schedule", value: onlineSchedule },
+              { label: "Instructor", value: instructor },
+            ].map((item, index) => (
+              <View
+                key={item.label}
+                className={`flex-row justify-between py-3 ${
+                  index < 20 ? "border-b border-gray-100" : ""
+                }`}
+              >
+                <Text className="text-base text-gray-500">{item.label}</Text>
+                <Text className="text-lg text-gray-800 font-semibold text-right flex-1">
+                  {item.value}
+                </Text>
+              </View>
+            ))}
+          </View>
         </View>
       </View>
     </View>

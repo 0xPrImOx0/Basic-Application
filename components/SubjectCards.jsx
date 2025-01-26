@@ -14,21 +14,21 @@ const SubjectCards = ({
 }) => {
   return (
     <CustomButton
-      styles="border border-[#D9D9D9] w-[170px] rounded-[5px] p-[15px] flex-col mb-[25px]"
+      styles="border border-[#D9D9D9] w-full rounded-xl p-5 flex-col mb-8"
       onPress={onPress}
       disabled={disabled}
     >
-      <View className="mb-[15px] rounded-[2px] items-center justify-center">
+      <View className="mb-4 items-center justify-center">
         <Image
           source={courseIcon}
-          className="w-[140px] h-[100px] rounded-[2px] border border-slate-300"
+          className="w-[140px] h-[100px] rounded-lg shadow-lg shadow-slate-500 border border-slate-500"
         />
       </View>
 
       <View className="items-center">
-        <View className={"mb-[5px]"}>
+        <View className={"mb-5"}>
           <Text
-            className={`font-bold text-[16px] text-center mb-[2px] ${
+            className={`font-bold text-xl text-center mb-1 ${
               courseType === "major"
                 ? "text-[#FF0004]"
                 : courseType === "minor"
@@ -38,9 +38,7 @@ const SubjectCards = ({
           >
             {courseCode}
           </Text>
-          <Text
-            className={"font-normal text-[14px] text-[#0A0A0A] text-center"}
-          >
+          <Text className={"font-normal text-base text-[#0A0A0A] text-center"}>
             {courseName}
           </Text>
         </View>
@@ -48,8 +46,8 @@ const SubjectCards = ({
         <View className={"justify-center"}>
           {courseSched1 !== "N/A N/A" ? (
             <Text
-              className={`font-light italic text-[12px] text-[#6C6C6C] text-center ${
-                courseSched2 ? "mb-[2px]" : ""
+              className={`font-light italic text-sm text-[#6C6C6C] text-center ${
+                courseSched2 ? "mb-1" : ""
               }`}
             >
               {courseSched1}
@@ -59,9 +57,7 @@ const SubjectCards = ({
           )}
           {courseSched2 ? (
             <Text
-              className={
-                "font-light italic text-[12px] text-[#6C6C6C] text-center"
-              }
+              className={"font-light italic text-sm text-[#6C6C6C] text-center"}
             >
               {courseSched2}
             </Text>

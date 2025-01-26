@@ -1,5 +1,5 @@
-import { View, Text, Image, FlatList } from "react-native";
-import React, { useState, useEffect } from "react";
+import { View, Text, Image } from "react-native";
+import React, { useState } from "react";
 import ShowMoreBox from "../../components/ShowMoreBox";
 import Images from "../../constants/Images";
 import Icons from "../../constants/Icons";
@@ -7,7 +7,6 @@ import SubjectCards from "../../components/SubjectCards";
 import courses from "../../lib/courses.json";
 import Container from "../../components/Container";
 import CourseCard from "../../components/CourseCard";
-import CustomButton from "../../components/CustomButton";
 
 const home = () => {
   const oddCourses = Object.keys(courses)
@@ -28,8 +27,8 @@ const home = () => {
   };
 
   const [datas, setDatas] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const [isCourseCardVisible, setIsCourseCardVisible] = useState(false);
+  const [isButtonDisabled, setIsButtonDisabled] = useState(false); // New state to disable button
 
   const ShowCourseCard = ({ data }) => {
     return (
@@ -49,25 +48,18 @@ const home = () => {
     );
   };
 
-  const [isCourseCardVisible, setIsCourseCardVisible] = useState(false);
-  const [isButtonDisabled, setIsButtonDisabled] = useState(false); // New state to disable button
-
   const toggleCourseCard = (courses, courseCode) => {
-    setLoading(true);
-    setError(null); // Clear previous errors
     try {
       const course = getCourseByCode(courses, courseCode);
       if (!course) {
-        throw new Error(`No course found for the code: ${courseCode}`);
+        console.log(`No course found for the code: ${courseCode}`);
       }
       console.log("Selected course:", course); // Debugging log
       setDatas(course);
       setIsButtonDisabled(true);
       setIsCourseCardVisible(true);
     } catch (err) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
+      console.log(err.message);
     }
   };
 
@@ -78,44 +70,40 @@ const home = () => {
 
   return (
     <View className={"w-full h-full"}>
-      {loading && <ActivityIndicator size="large" color="#0000ff" />}
-      {error && <Text style={{ color: "red" }}>Error: {error}</Text>}
       <Container>
-        <View className={"mt-[25px] mb-[35px] px-[15px] w-full"}>
+        <View className={"mt-8 mb-10 px-5 w-full"}>
           <View className={"flex-row items-center"}>
             <Image
               source={Images.daugCrop}
-              className={"w-[50px] h-[50px] rounded-full mr-[12px]"}
+              className={"w-14 h-14 rounded-full mr-3"}
             />
-            <Text className={"font-extrabold text-[20px] text-[#0A0A0A]"}>
+            <Text className={"font-extrabold text-2xl text-[#0A0A0A]"}>
               Welcome, Rey!
             </Text>
           </View>
         </View>
 
-        <View className={"px-[15px]"}>
+        <View className={"px-5"}>
           <ShowMoreBox
             label="Student's Sypnosis"
             icon={Icons.biography}
-            styles="mt-[25px]"
+            borderStyle="mt-8"
           >
-            <View className="items-center">
+            <View className="items-center mt-4">
               <Image
                 source={Images.studGrad}
-                className={"w-[100px] h-[100px] rounded-full"}
+                className={"w-32 h-32 rounded-full"}
               />
 
-              <View className={"pt-[5px]"}>
+              <View className={"pt-3"}>
                 <Text
-                  className={
-                    "font-medium text-[16px] text-[#0A0A0A] text-center"
-                  }
+                  className={"font-medium text-xl text-[#0A0A0A] text-center"}
                 >
                   Rey Lagumbay Daug Jr.
                 </Text>
                 <Text
                   className={
-                    "font-light italic text-[14px] text-[#6C6C6C] text-center"
+                    "font-light italic text-base text-[#6C6C6C] text-center"
                   }
                 >
                   Born on October 3, 2004
@@ -123,8 +111,8 @@ const home = () => {
               </View>
             </View>
 
-            <View className="mt-[20px] text-justify">
-              <Text className="font-normal text-[14px] text-[[#0A0A0A] text-justify">
+            <View className="mt-5 px-2 text-justify">
+              <Text className="font-normal text-base text-[[#0A0A0A] text-justify">
                 {"\t\t\t"}Rey is a determined and resilient student who sees
                 challenges as opportunities for growth. With an unwavering
                 problem-solving mindset, he faces every obstacle head-on,
@@ -144,36 +132,36 @@ const home = () => {
           </ShowMoreBox>
         </View>
 
-        <View className={" px-[15px]"}>
+        <View className={"px-5"}>
           <ShowMoreBox
             label="Class Schedule"
             icon={Icons.event}
-            styles="mt-[25px] items-center"
+            borderStyle="mt-8"
           >
-            <View className="items-center mb-[30px]">
-              <Text className="font-bold text-[14px] text-[#0A0A0A] text-center">
+            <View className="items-center my-8">
+              <Text className="font-bold text-xl text-[#0A0A0A] text-center">
                 Legend
               </Text>
 
-              <View className="flex-row justify-between mt-[13px]">
-                <View className="flex-row justify-between items-center mr-[20px]">
-                  <View className="rounded-full bg-[#FF0004] w-[15px] h-[15px] mr-[5px]" />
-                  <Text className="font-light italic text-[12px] text-[#6C6C6C]">
+              <View className="flex-row justify-between mt-4">
+                <View className="flex-row justify-between items-center mr-6">
+                  <View className="rounded-full bg-[#FF0004] w-5 h-5 mr-2" />
+                  <Text className="font-light italic text-base text-[#6C6C6C]">
                     Major Course
                   </Text>
                 </View>
 
                 <View className="flex-row justify-between items-center">
-                  <View className="rounded-full bg-[#00FF4C] w-[15px] h-[15px] mr-[5px]" />
-                  <Text className="font-light italic text-[12px] text-[#6C6C6C]">
+                  <View className="rounded-full bg-[#00FF4C] w-5 h-5 mr-2" />
+                  <Text className="font-light italic text-base text-[#6C6C6C]">
                     Minor Course
                   </Text>
                 </View>
               </View>
             </View>
 
-            <View className="flex-row justify-between w-[350px] items-start">
-              <View className={"w-[170px]"}>
+            <View className="flex-row justify-between w-full items-start mx-3">
+              <View className={"w-[48%]"}>
                 {oddCourses.map((course, index) => (
                   <SubjectCards
                     key={index}
@@ -189,7 +177,7 @@ const home = () => {
                 ))}
               </View>
 
-              <View className={"w-[170px]"}>
+              <View className={"w-[48%]"}>
                 {evenCourses.map((course, index) => (
                   <SubjectCards
                     key={index}
