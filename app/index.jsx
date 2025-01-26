@@ -85,11 +85,7 @@ export default function Index() {
                   className={"w-[250px] h-[250px] mb-[15px]"}
                   tintColor={"#4B4B4B"}
                 />
-                <Text
-                  className={
-                    "font-medium text-[18px] text-[#0A0A0A] text-center"
-                  }
-                >
+                <Text className={"text-[18px] text-[#0A0A0A] text-center"}>
                   Take charge of your academic journey with ClassMate! Stay
                   organized, and unlock your full potential with ease.
                 </Text>

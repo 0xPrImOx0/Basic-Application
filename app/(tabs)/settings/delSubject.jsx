@@ -8,6 +8,7 @@ import {
   Alert,
 } from "react-native";
 import { Picker } from "@react-native-picker/picker";
+import CustomButton from "../../../components/CustomButton";
 
 const delSubject = () => {
   const [isModalVisible, setModalVisible] = useState(false);
@@ -47,13 +48,13 @@ const delSubject = () => {
   };
 
   return (
-    <View>
-      <TouchableOpacity
+    <View className={"m-10"}>
+      <CustomButton
+        label={"Delete Subject"}
+        styles={"rounded-md p-3 items-center bg-red-500"}
         onPress={() => setModalVisible(true)}
-        className="bg-red-500 p-3 rounded-md"
-      >
-        <Text className="text-white text-center">Delete Subject</Text>
-      </TouchableOpacity>
+        textStyle={"text-white text-center"}
+      />
 
       <Modal
         visible={isModalVisible}

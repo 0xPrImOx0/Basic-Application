@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useRef } from "react";
 import {
   View,
   Text,
@@ -12,8 +12,12 @@ import {
 import * as ImagePicker from "expo-image-picker";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { Picker } from "@react-native-picker/picker";
+import DropDown from "../../../components/DropDown";
+import FormField from "../../../components/FormField";
+import Container from "../../../components/Container";
+import CustomButton from "../../../components/CustomButton";
 
-const WEEKDAYS = [
+const days = [
   "Monday",
   "Tuesday",
   "Wednesday",
@@ -23,7 +27,7 @@ const WEEKDAYS = [
   "Sunday",
 ];
 
-const SubjectViewForm = () => {
+const addSubject = () => {
   const [formData, setFormData] = useState({
     icon: null,
     courseCode: "",
@@ -37,6 +41,9 @@ const SubjectViewForm = () => {
     onlineScheduleTime: new Date(),
     instructor: "",
   });
+
+  const f2fTextInputRef = useRef(null);
+  const onlineTextInputRef = useRef(null);
 
   const formatTime = (date) =>
     date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
@@ -93,15 +100,23 @@ const SubjectViewForm = () => {
   };
 
   const handleTimeChange = (key, event, selectedDate) => {
-    if (selectedDate) {
-      setFormData((prev) => ({
-        ...prev,
-        [key]: selectedDate,
-      }));
-      setShowDatePickers((prev) => ({
-        ...prev,
-        [key === "f2fScheduleTime" ? "f2fTime" : "onlineTime"]: false,
-      }));
+    if (event.type === "set") {
+      // Blur the appropriate TextInput based on the key
+      if (key === "f2fScheduleTime") {
+        f2fTextInputRef.current?.blur();
+      } else if (key === "onlineScheduleTime") {
+        onlineTextInputRef.current?.blur();
+      }
+      if (selectedDate) {
+        setFormData((prev) => ({
+          ...prev,
+          [key]: selectedDate,
+        }));
+        setShowDatePickers((prev) => ({
+          ...prev,
+          [key === "f2fScheduleTime" ? "f2fTime" : "onlineTime"]: false,
+        }));
+      }
     }
   };
 
@@ -110,240 +125,232 @@ const SubjectViewForm = () => {
   };
 
   return (
-    <View className="flex-1 p-4 bg-gray-100">
-      <ScrollView keyboardShouldPersistTaps="handled">
-        {/* Icon Upload */}
-        <View className="mb-4">
-          <Text className="text-lg font-bold text-gray-800 mb-2">
-            Subject Icon
-          </Text>
-          {formData.icon ? (
-            <View>
-              <Image
-                source={{ uri: formData.icon }}
-                className="w-full h-64 rounded-md mb-2"
-                resizeMode="contain"
+    // <View className="flex-1 p-4 bg-gray-100">
+    // <ScrollView keyboardShouldPersistTaps="handled">
+    <Container savStyles={"px-4 bg-[#d9d9d9]"} bg={"#d9d9d9"} pt={"15"}>
+      {/* Icon Upload */}
+      <View className="mb-4 py-3 bg-white rounded-md px-3">
+        <Text className="text-[16px] font-medium text-[#0A0A0A] mb-2">
+          Subject Icon
+        </Text>
+        {formData.icon ? (
+          <View>
+            <Image
+              source={{ uri: formData.icon }}
+              className="w-full h-64 rounded-md mt-2 mb-5"
+              resizeMode="contain"
+            />
+            <View className="flex-row justify-between">
+              <CustomButton
+                label={"Change Icon"}
+                styles={"bg-[#5CB88F] flex-1 mr-2 p-2"}
+                onPress={pickImage}
               />
-              <View className="flex-row justify-between">
-                <TouchableOpacity
-                  onPress={pickImage}
-                  className="bg-blue-500 flex-1 mr-2 p-2 rounded-md"
-                >
-                  <Text className="text-white text-center">Change Icon</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  onPress={deleteIcon}
-                  className="bg-red-500 flex-1 p-2 rounded-md"
-                >
-                  <Text className="text-white text-center">Delete Icon</Text>
-                </TouchableOpacity>
-              </View>
+
+              <CustomButton
+                label={"Delete Icon"}
+                styles={"bg-[#FF0004] flex-1 p-2"}
+                onPress={deleteIcon}
+              />
             </View>
-          ) : (
-            <TouchableOpacity
-              onPress={pickImage}
-              className="bg-blue-500 p-2 rounded-md"
-            >
-              <Text className="text-white text-center">Upload Icon</Text>
-            </TouchableOpacity>
-          )}
+          </View>
+        ) : (
+          <CustomButton
+            label={"Upload Icon"}
+            styles={"bg-[#5CB88F] flex-1 p-2"}
+            onPress={pickImage}
+          />
+        )}
+      </View>
+
+      {/* Course Details */}
+      <View className="mb-4 rounded-md bg-white p-3">
+        <FormField
+          formHeader="Course Code"
+          formHeaderStyle={"text-[16px] font-medium text-[#0A0A0A]"}
+          value={formData.courseCode}
+          placeholder="Enter course code"
+          handleChangeText={(text) =>
+            setFormData((prev) => ({ ...prev, courseCode: text }))
+          }
+          letterCase={"characters"}
+          styles="mt-1 w-full bg-white mb-4"
+        />
+
+        <FormField
+          formHeader="Course Name"
+          formHeaderStyle={"text-[16px] font-medium text-[#0A0A0A]"}
+          value={formData.courseName}
+          placeholder="Enter course name"
+          handleChangeText={(text) =>
+            setFormData((prev) => ({ ...prev, courseName: text }))
+          }
+          styles="mt-1 w-full bg-white mb-4"
+        />
+
+        {/* Course Type Picker */}
+        <Text className="text-[16px] font-medium text-[#0A0A0A] mb-1">
+          Course Type
+        </Text>
+        <View className="border border-gray-300 rounded-md bg-white mb-4">
+          <DropDown
+            selectedValue={formData.courseType}
+            onValueChange={(itemValue) =>
+              setFormData((prev) => ({ ...prev, courseType: itemValue }))
+            }
+            noOfData={2}
+            label={["Major", "Minor"]}
+            value={["major", "minor"]}
+          />
         </View>
 
-        {/* Course Details */}
-        <View className="mb-4">
-          <Text className="text-sm font-medium text-gray-700 mb-1">
-            Course Code
-          </Text>
-          <TextInput
-            className="border border-gray-300 rounded-md p-2 mb-3 bg-white"
-            value={formData.courseCode}
-            onChangeText={(text) =>
-              setFormData((prev) => ({ ...prev, courseCode: text }))
-            }
-            placeholder="Enter course code"
-          />
+        <FormField
+          formHeader="Section"
+          formHeaderStyle={"text-[16px] font-medium text-[#0A0A0A]"}
+          value={formData.section}
+          placeholder="Enter section"
+          handleChangeText={(text) =>
+            setFormData((prev) => ({ ...prev, section: text }))
+          }
+          styles="mt-1 w-full bg-white"
+        />
+      </View>
 
-          <Text className="text-sm font-medium text-gray-700 mb-1">
-            Course Na me
-          </Text>
-          <TextInput
-            className="border border-gray-300 rounded-md p-2 mb-3 bg-white"
-            value={formData.courseName}
-            onChangeText={(text) =>
-              setFormData((prev) => ({ ...prev, courseName: text }))
-            }
-            placeholder="Enter course name"
-          />
-
-          {/* Course Type Picker */}
-          <Text className="text-sm font-medium text-gray-700 mb-1">
-            Course Type
-          </Text>
-          <View className="border border-gray-300 rounded-md bg-white">
-            <Picker
-              selectedValue={formData.courseType}
-              onValueChange={(itemValue) =>
-                setFormData((prev) => ({ ...prev, courseType: itemValue }))
+      {/* F2F Schedule */}
+      <View className="bg-white pb-4 rounded-md mb-4 p-3">
+        <Text className="text-[18px] font-extrabold text-[#0A0A0A] mb-3">
+          Face-to-Face Schedule
+        </Text>
+        <View className="flex-row justify-between mb-3">
+          <View className="flex-1 mr-2">
+            <Text className="text-[16px] font-medium text-[#0A0A0A] mb-1">
+              Day
+            </Text>
+            <View className="border border-gray-300 rounded-md bg-white">
+              <DropDown
+                selectedValue={formData.f2fScheduleDay}
+                onValueChange={(itemValue) =>
+                  setFormData((prev) => ({
+                    ...prev,
+                    f2fScheduleDay: itemValue,
+                  }))
+                }
+                dataList={days}
+              />
+            </View>
+          </View>
+          <View className="flex-1">
+            <FormField
+              formHeader="Time"
+              formHeaderStyle={"text-[16px] font-medium text-[#0A0A0A]"}
+              value={formatTime(formData.f2fScheduleTime)} // Format Date object
+              onFocus={() =>
+                setShowDatePickers((prev) => ({ ...prev, f2fTime: true }))
               }
-            >
-              <Picker.Item label="Major" value="major" />
-              <Picker.Item label="Minor" value="minor" />
-            </Picker>
+              placeholder="HH:MM"
+              styles="mt-1 w-full bg-white"
+              ref={f2fTextInputRef} // Reference for the TextInput
+            />
           </View>
-
-          <Text className="text-sm font-medium text-gray-700 mb-1">
-            Section
-          </Text>
-          <TextInput
-            className="border border-gray-300 rounded-md p-2 mb-3 bg-white"
-            value={formData.section}
-            onChangeText={(text) =>
-              setFormData((prev) => ({ ...prev, section: text }))
-            }
-            placeholder="Enter section"
-          />
         </View>
 
-        {/* F2F Schedule */}
-        <View className="bg-white p-4 rounded-md mb-4">
-          <Text className="text-lg font-bold text-gray-800 mb-2">
-            Face-to-Face Schedule
-          </Text>
-          <View className="flex-row justify-between mb-3">
-            <View className="flex-1 mr-2">
-              <Text className="text-sm font-medium text-gray-700 mb-1">
-                Day
-              </Text>
-              <View className="border border-gray-300 rounded-md bg-white">
-                <Picker
-                  selectedValue={formData.f2fScheduleDay}
-                  onValueChange={(itemValue) =>
-                    setFormData((prev) => ({
-                      ...prev,
-                      f2fScheduleDay: itemValue,
-                    }))
-                  }
-                >
-                  {WEEKDAYS.map((day) => (
-                    <Picker.Item key={day} label={day} value={day} />
-                  ))}
-                </Picker>
-              </View>
-            </View>
-            <View className="flex-1">
-              <Text className="text-sm font-medium text-gray-700 mb-1">
-                Time
-              </Text>
-              <TextInput
-                className="border border-gray-300 rounded-md p-2 bg-white flex-1"
-                value={formatTime(formData.f2fScheduleTime)} // Format Date object
-                onFocus={() =>
-                  setShowDatePickers((prev) => ({ ...prev, f2fTime: true }))
+        <FormField
+          formHeader="Room"
+          formHeaderStyle={"text-[16px] font-medium text-[#0A0A0A]"}
+          value={formData.room}
+          handleChangeText={(text) =>
+            setFormData((prev) => ({ ...prev, room: text }))
+          }
+          placeholder="Enter room number"
+          styles="mt-1 w-full bg-white"
+        />
+      </View>
+
+      {/* Online Schedule */}
+      <View className="bg-white p-4 rounded-md mb-4">
+        <Text className="text-[18px] font-extrabold text-[#0A0A0A] mb-2">
+          Online Schedule
+        </Text>
+        <View className="flex-row justify-between mb-3">
+          <View className="flex-1 mr-2">
+            <Text className="text-[16px] font-medium text-[#0A0A0A] mb-1">
+              Day
+            </Text>
+            <View className="border border-gray-300 rounded-md bg-white">
+              <DropDown
+                selectedValue={formData.onlineScheduleDay}
+                onValueChange={(itemValue) =>
+                  setFormData((prev) => ({
+                    ...prev,
+                    onlineScheduleDay: itemValue,
+                  }))
                 }
-                placeholder="HH:MM"
+                dataList={days}
               />
             </View>
           </View>
-
-          <Text className="text-sm font-medium text-gray-700 mb-1">Room</Text>
-          <TextInput
-            className="border border-gray-300 rounded-md p-2 mb-3 bg-white"
-            value={formData.room}
-            onChangeText={(text) =>
-              setFormData((prev) => ({ ...prev, room: text }))
-            }
-            placeholder="Enter room number"
-          />
-        </View>
-
-        {/* Online Schedule */}
-        <View className="bg-white p-4 rounded-md mb-4">
-          <Text className="text-lg font-bold text-gray-800 mb-2">
-            Online Schedule
-          </Text>
-          <View className="flex-row justify-between mb-3">
-            <View className="flex-1 mr-2">
-              <Text className="text-sm font-medium text-gray-700 mb-1">
-                Day
-              </Text>
-              <View className="border border-gray-300 rounded-md bg-white">
-                <Picker
-                  selectedValue={formData.onlineScheduleDay}
-                  onValueChange={(itemValue) =>
-                    setFormData((prev) => ({
-                      ...prev,
-                      onlineScheduleDay: itemValue,
-                    }))
-                  }
-                >
-                  {WEEKDAYS.map((day) => (
-                    <Picker.Item key={day} label={day} value={day} />
-                  ))}
-                </Picker>
-              </View>
-            </View>
-            <View className="flex-1">
-              <Text className="text-sm font-medium text-gray-700 mb-1">
-                Time
-              </Text>
-              <TextInput
-                className="border border-gray-300 rounded-md p-2 bg-white"
-                value={formatTime(formData.onlineScheduleTime)} // Format Date object
-                onFocus={() =>
-                  setShowDatePickers((prev) => ({ ...prev, onlineTime: true }))
-                }
-                placeholder="HH:MM"
-              />
-            </View>
+          <View className="flex-1">
+            <FormField
+              formHeader="Time"
+              formHeaderStyle={"text-[16px] font-medium text-[#0A0A0A]"}
+              value={formatTime(formData.onlineScheduleTime)} // Format Date object
+              onFocus={() =>
+                setShowDatePickers((prev) => ({ ...prev, onlineTime: true }))
+              }
+              placeholder="HH:MM"
+              styles="mt-1 w-full bg-white"
+              ref={onlineTextInputRef} // Reference for the TextInput
+            />
           </View>
         </View>
+      </View>
 
-        {/* Instructor */}
-        <View className="mb-4">
-          <Text className="text-sm font-medium text-gray-700 mb-1">
-            Instructor
-          </Text>
-          <TextInput
-            className="border border-gray-300 rounded-md p-2 mb-3 bg-white"
-            value={formData.instructor}
-            onChangeText={(text) =>
-              setFormData((prev) => ({ ...prev, instructor: text }))
-            }
-            placeholder="Enter instructor name"
-          />
-        </View>
+      {/* Instructor */}
+      <View className="mb-4 p-4 rounded-md bg-white">
+        <FormField
+          formHeader="Instructor"
+          formHeaderStyle={"text-[16px] font-medium text-[#0A0A0A]"}
+          value={formData.instructor}
+          handleChangeText={(text) =>
+            setFormData((prev) => ({ ...prev, instructor: text }))
+          }
+          placeholder="Enter instructor name"
+          styles="mt-1 w-full bg-white"
+        />
+      </View>
 
-        {/* Submit Button */}
-        <TouchableOpacity
-          onPress={handleSubmit}
-          className="bg-blue-600 rounded-md p-3 items-center"
-        >
-          <Text className="text-white font-bold">Create Subject</Text>
-        </TouchableOpacity>
+      {/* Submit Button */}
+      <CustomButton
+        label={"Create Subject"}
+        styles={"rounded-md p-3 items-center bg-[#5CB88F] mb-5"}
+        onPress={handleSubmit}
+        textStyle={"font-extrabold text-lg"}
+      />
 
-        {showDatePickers.f2fTime && (
-          <DateTimePicker
-            value={formData.f2fScheduleTime}
-            mode="time"
-            display="default"
-            onChange={(event, selectedDate) =>
-              handleTimeChange("f2fScheduleTime", event, selectedDate)
-            }
-          />
-        )}
-        {showDatePickers.onlineTime && (
-          <DateTimePicker
-            value={formData.onlineScheduleTime}
-            mode="time"
-            display="default"
-            onChange={(event, selectedDate) =>
-              handleTimeChange("onlineScheduleTime", event, selectedDate)
-            }
-          />
-        )}
-      </ScrollView>
-    </View>
+      {showDatePickers.f2fTime && (
+        <DateTimePicker
+          value={formData.f2fScheduleTime}
+          mode="time"
+          display="default"
+          onChange={(event, selectedDate) =>
+            handleTimeChange("f2fScheduleTime", event, selectedDate)
+          }
+        />
+      )}
+      {showDatePickers.onlineTime && (
+        <DateTimePicker
+          value={formData.onlineScheduleTime}
+          mode="time"
+          display="default"
+          onChange={(event, selectedDate) =>
+            handleTimeChange("onlineScheduleTime", event, selectedDate)
+          }
+        />
+      )}
+    </Container>
+    /* </ScrollView> */
+    /* // </View> */
   );
 };
 
-export default SubjectViewForm;
+export default addSubject;
