@@ -15,7 +15,7 @@ const signIn = () => {
 
   return (
     <Container centerContent={true} centerHorizontal={true}>
-      <View className="flex border-[#D9D9D9] border rounded-2xl w-[85%] h-[50.5%] p-5">
+      <View className="flex border-[#D9D9D9] border rounded-2xl w-[85%] h-auto p-5">
         <View>
           <Text className={"font-extrabold text-2xl"}>Welcome Back</Text>
           <Text className={"font-light text-lg"}>

@@ -19,39 +19,39 @@ const signIn = () => {
 
   return (
     <Container centerContent={true} centerHorizontal={true}>
-      <View className="border-[#D9D9D9] border rounded-[10px] w-[365px] h-[645px] p-[20px]">
+      <View className="border-[#D9D9D9] border rounded-2xl w-[85%] h-auto p-5">
         <View>
-          <Text className={"font-extrabold text-[20px]"}>Hello, There!</Text>
-          <Text className={"font-light text-[16px]"}>
+          <Text className={"font-extrabold text-2xl"}>Hello, There!</Text>
+          <Text className={"font-light text-lg"}>
             Login or create an account to continue
           </Text>
         </View>
 
         <View
           className={
-            "flex-row justify-between bg-[#d9d9d9] rounded-[5px] w-[320px] mt-[20px]"
+            "flex-row justify-between bg-[#d9d9d9] rounded-md w-[100%] mt-6"
           }
         >
           <CustomButton
             label="Login"
-            styles="flex-1 mr-[5px]"
-            textStyle="font-normal text-[14px] text-[#6C6C6C]"
+            styles="flex-1 mr-1.5"
+            textStyle="font-normal text-base text-[#6C6C6C]"
             onPress={() => router.replace("/signIn")}
           />
           <CustomButton
             label="Create Account"
-            styles="flex-1 bg-white min-h-[32px] py-[5px] my-[5px] mx-[5px] rounded-[3px]"
-            textStyle="font-bold text-[14px] text-[#0A0A0A]"
+            styles="flex-1 bg-white min-h-9 py-1.5 my-1.5 mx-1.5 rounded-sm"
+            textStyle="font-bold text-base text-[#0A0A0A]"
           />
         </View>
 
-        <View className={"my-[30px]"}>
+        <View className={"my-8"}>
           <FormField
             formHeader={"Full Name"}
             placeholder={"Enter your Full Name"}
             value={form.fullName}
             handleChangeText={(e) => setForm({ ...form, fullName: e })}
-            styles="mt-[6px] mb-[22px]"
+            styles="mt-1 mb-6"
             error={form.fullNameError}
             // onBlur={() => setIsEmailClicked(true)}
           />
@@ -61,7 +61,7 @@ const signIn = () => {
             placeholder={"Enter your Email"}
             value={form.email}
             handleChangeText={(e) => setForm({ ...form, email: e })}
-            styles="mt-[6px] mb-[22px]"
+            styles="mt-1 mb-6"
             keyboardType="email-address"
             error={form.emailError}
             // onBlur={() => setIsEmailClicked(true)}
@@ -72,7 +72,7 @@ const signIn = () => {
             placeholder={"Enter your Password"}
             value={form.password}
             handleChangeText={(e) => setForm({ ...form, password: e })}
-            styles="mt-[6px] mb-[22px]"
+            styles="mt-1 mb-6"
             error={form.passwordError}
             // onBlur={() => setIsPasswordClicked(true)}
           />
@@ -82,7 +82,7 @@ const signIn = () => {
             placeholder={"Confirm your Password"}
             value={form.confirmPassword}
             handleChangeText={(e) => setForm({ ...form, confirmPassword: e })}
-            styles="mt-[6px]"
+            styles="mt-1"
             error={form.confirmPasswordError}
             // onBlur={() => setIsPasswordClicked(true)}
           />
@@ -90,12 +90,12 @@ const signIn = () => {
 
         <CustomButton
           label="Create Account"
-          styles="w-full bg-[#161515] h-[43px] text-[14px] mb-[20px]"
+          styles="w-full bg-[#161515] h-12 text-base mb-6"
           textStyle="font-medium text-[#fff]"
           onPress={() => router.replace("/home")}
         />
 
-        <Text className={"font-light text-[14px] text-[#6C6C6C] text-justify"}>
+        <Text className={"font-light text-base text-[#6C6C6C] text-justify"}>
           By continuing, you agree to our Terms of Service and Privacy Policy.
         </Text>
       </View>

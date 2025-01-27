@@ -18,7 +18,7 @@ export default function Index() {
       >
         <Image
           source={Icons.logo}
-          className={"w-[60%] h-[28%]"}
+          className={"w-[50%] h-[24%]"}
           tintColor={"#0A0A0A"}
         />
       </View>
@@ -44,8 +44,8 @@ export default function Index() {
       ) : (
         <Container
           scroll={false}
-          savStyles={"p-[20px] justify-center items-center"}
-          viewStyle={"p-[20px]"}
+          savStyles={"p-6 justify-center items-center"}
+          viewStyle={"p-6"}
         >
           <Swiper
             loop={false} // Disable looping (once you reach the last page, it won't go back to the first one)
@@ -57,19 +57,19 @@ export default function Index() {
             autoplayTimeout={3}
           >
             <View className={"items-center justify-center h-full"}>
-              <View className={"mb-[15px]"}>
+              <View className={"mb-4"}>
                 <Image
                   source={Icons.logo}
                   tintColor={"#0A0A0A"}
-                  className="w-[130px] h-[130px]"
+                  className="w-36 h-36"
                 />
               </View>
               <View>
                 <LogoName />
-                <View className={"mt-[10px]"}>
+                <View className={"mt-3"}>
                   <Text
                     className={
-                      "font-light italic text-[14px] text-[#6C6C6C] text-center mt-[-25px]"
+                      "font-light italic text-base text-[#6C6C6C] text-center -mt-7"
                     }
                   >
                     {`"Your Virtual Assistant for Academics\nand Personal Life"`}
@@ -82,19 +82,19 @@ export default function Index() {
               <View className={"items-center justify-center"}>
                 <Image
                   source={Images.onBoard}
-                  className={"w-[250px] h-[250px] mb-[15px]"}
+                  className={"w-64 h-64 mb-1"}
                   tintColor={"#4B4B4B"}
                 />
-                <Text className={"text-[18px] text-[#0A0A0A] text-center"}>
+                <Text className={"text-xl text-[#0A0A0A] text-center"}>
                   Take charge of your academic journey with ClassMate! Stay
                   organized, and unlock your full potential with ease.
                 </Text>
               </View>
-              <View className="absolute bottom-10 left-0 right-0 flex items-center h-[43px]">
+              <View className="absolute bottom-10 left-0 right-0 flex items-center h-12 w-">
                 <CustomButton
                   label="Get Started"
-                  styles="w-full bg-[#161515] h-[43px] text-[14px] mb-[20px]"
-                  textStyle="font-medium text-[#fff] w-full"
+                  styles="w-full bg-[#161515] h-12 mb-6"
+                  textStyle="font-medium text-base text-[#fff] w-full"
                   onPress={() => router.push("signIn")}
                 />
               </View>

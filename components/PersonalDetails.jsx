@@ -4,10 +4,8 @@ import React from "react";
 const PersonalDetails = ({ icon, label }) => {
   return (
     <View className={"flex-row justify-start"}>
-      <Image source={icon} className={"w-[21px] h-[21px] mr-[8px]"} />
-      <Text
-        className={"font-normal text-[16px] text-[#0A0A0A] text-wrap flex-1"}
-      >
+      <Image source={icon} className={"w-7 h-7 mr-2.5"} />
+      <Text className={"font-normal text-lg text-[#0A0A0A] text-wrap flex-1"}>
         {label}
       </Text>
     </View>

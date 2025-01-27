@@ -27,15 +27,15 @@ const FormField = forwardRef(
       <View className={`items-start ${containerStyles}`}>
         <View>
           <Text
-            className={`font-bold text-[14px] text-[#0A0A0A] ${formHeaderStyle}`}
+            className={`font-bold text-base text-[#0A0A0A] ${formHeaderStyle}`}
           >
             {formHeader}
           </Text>
         </View>
 
         <View
-          className={`border border-[#D9D9D9] w-[320px] h-[42px] rounded-[5px] ${
-            error ? "border-[1px] border-[#F34336]" : "focus:border-[#3bf5c6]"
+          className={`border border-[#D9D9D9] w-full h-12 rounded-md ${
+            error ? "border-2 border-[#F34336]" : "focus:border-[#3bf5c6]"
           } 
           ${
             placeholder === "Enter your Password" ||
@@ -45,7 +45,7 @@ const FormField = forwardRef(
           } ${styles}`}
         >
           <TextInput
-            className="text-[#0A0A0A] py-[10px] pl-[10px] text-[16px] flex-1 font-normal"
+            className="text-[#0A0A0A] py-3 pl-3 text-lg flex-1 font-normal"
             value={value}
             placeholder={placeholder}
             placeholderTextColor={"#6C6C6C"}
@@ -70,7 +70,7 @@ const FormField = forwardRef(
                 setShowPassword((prev) => !prev) ||
                 setShowConfirmPassword((prev) => !prev)
               }
-              styles={"mr-[15px] ml-[5px]"}
+              styles={"mr-4 ml-1.5"}
               iconTint={"#0A0A0A"}
               iconStyle={"w-7 h-7"}
             />

@@ -136,7 +136,7 @@ const home = () => {
           <ShowMoreBox
             label="Class Schedule"
             icon={Icons.event}
-            borderStyle="mt-8"
+            borderStyle="mt-8 mb-8"
           >
             <View className="items-center my-8">
               <Text className="font-bold text-xl text-[#0A0A0A] text-center">

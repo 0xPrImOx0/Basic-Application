@@ -46,7 +46,7 @@ const Container = ({
           </ScrollView>
         ) : (
           <View
-            className={`min-h-[100%] px-[14px] relative pb-[${pb}] ${styles} ${viewStyle}`}
+            className={`min-h-[100%] px-4 relative pb-[${pb}] ${styles} ${viewStyle}`}
           >
             {children}
           </View>
