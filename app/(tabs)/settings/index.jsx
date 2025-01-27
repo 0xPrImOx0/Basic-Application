@@ -9,27 +9,27 @@ import { router } from "expo-router";
 const settings = () => {
   return (
     <Container>
-      <View className="px-[24px]">
-        <View className=" my-[30px]">
+      <View className="px-7">
+        <View className=" my-9">
           <ShowMoreBox
             label="Rey Daug"
             fontStyle={"font-extrabold"}
             subLabel={"Manage account info and security"}
             icon={Images.daugCrop}
-            imageStyle={"w-[50px] h-[50px] rounded-full"}
+            imageStyle={"w-14 h-14 rounded-full"}
             arrowDirection="right"
             onClick={() => router.push("/settings/manageAccount")}
           />
         </View>
 
-        <View className="w-full rounded-[5px] border border-[#D9D9D9]">
+        <View className="w-full rounded-md border border-[#D9D9D9]">
           <ShowMoreBox
             label="Add Subject"
             fontStyle={"font-extrabold"}
             icon={Icons.plus}
-            imageStyle={"w-[50px] h-[50px] rounded-full"}
+            imageStyle={"w-14 h-14 rounded-full"}
             arrowDirection="right"
-            borderStyle={"border-0 my-0 mb-[10px]"}
+            borderStyle={"border-0 my-0 mb-3"}
             onClick={() => router.push("/settings/addSubject")}
           />
 
@@ -37,7 +37,7 @@ const settings = () => {
             label="Delete Subject"
             fontStyle={"font-extrabold"}
             icon={Icons.del}
-            imageStyle={"w-[50px] h-[50px] rounded-full"}
+            imageStyle={"w-14 h-14 rounded-full"}
             arrowDirection="right"
             borderStyle={"border-0 my-0"}
             onClick={() => router.push("/settings/delSubject")}

@@ -130,7 +130,7 @@ const addSubject = () => {
     <Container savStyles={"px-4 bg-[#d9d9d9]"} bg={"#d9d9d9"} pt={"15"}>
       {/* Icon Upload */}
       <View className="mb-4 py-3 bg-white rounded-md px-3">
-        <Text className="text-[16px] font-medium text-[#0A0A0A] mb-2">
+        <Text className="text-lg font-medium text-[#0A0A0A] mb-2">
           Subject Icon
         </Text>
         {formData.icon ? (
@@ -167,7 +167,7 @@ const addSubject = () => {
       <View className="mb-4 rounded-md bg-white p-3">
         <FormField
           formHeader="Course Code"
-          formHeaderStyle={"text-[16px] font-medium text-[#0A0A0A]"}
+          formHeaderStyle={"text-lg font-medium text-[#0A0A0A]"}
           value={formData.courseCode}
           placeholder="Enter course code"
           handleChangeText={(text) =>
@@ -179,7 +179,7 @@ const addSubject = () => {
 
         <FormField
           formHeader="Course Name"
-          formHeaderStyle={"text-[16px] font-medium text-[#0A0A0A]"}
+          formHeaderStyle={"text-lg font-medium text-[#0A0A0A]"}
           value={formData.courseName}
           placeholder="Enter course name"
           handleChangeText={(text) =>
@@ -189,7 +189,7 @@ const addSubject = () => {
         />
 
         {/* Course Type Picker */}
-        <Text className="text-[16px] font-medium text-[#0A0A0A] mb-1">
+        <Text className="text-lg font-medium text-[#0A0A0A] mb-1">
           Course Type
         </Text>
         <View className="border border-gray-300 rounded-md bg-white mb-4">
@@ -206,7 +206,7 @@ const addSubject = () => {
 
         <FormField
           formHeader="Section"
-          formHeaderStyle={"text-[16px] font-medium text-[#0A0A0A]"}
+          formHeaderStyle={"text-lg font-medium text-[#0A0A0A]"}
           value={formData.section}
           placeholder="Enter section"
           handleChangeText={(text) =>
@@ -218,14 +218,12 @@ const addSubject = () => {
 
       {/* F2F Schedule */}
       <View className="bg-white pb-4 rounded-md mb-4 p-3">
-        <Text className="text-[18px] font-extrabold text-[#0A0A0A] mb-3">
+        <Text className="text-xl font-extrabold text-[#0A0A0A] mb-3">
           Face-to-Face Schedule
         </Text>
         <View className="flex-row justify-between mb-3">
           <View className="flex-1 mr-2">
-            <Text className="text-[16px] font-medium text-[#0A0A0A] mb-1">
-              Day
-            </Text>
+            <Text className="text-lg font-medium text-[#0A0A0A] mb-1">Day</Text>
             <View className="border border-gray-300 rounded-md bg-white">
               <DropDown
                 selectedValue={formData.f2fScheduleDay}
@@ -242,7 +240,7 @@ const addSubject = () => {
           <View className="flex-1">
             <FormField
               formHeader="Time"
-              formHeaderStyle={"text-[16px] font-medium text-[#0A0A0A]"}
+              formHeaderStyle={"text-lg font-medium text-[#0A0A0A]"}
               value={formatTime(formData.f2fScheduleTime)} // Format Date object
               onFocus={() =>
                 setShowDatePickers((prev) => ({ ...prev, f2fTime: true }))
@@ -256,7 +254,7 @@ const addSubject = () => {
 
         <FormField
           formHeader="Room"
-          formHeaderStyle={"text-[16px] font-medium text-[#0A0A0A]"}
+          formHeaderStyle={"text-lg font-medium text-[#0A0A0A]"}
           value={formData.room}
           handleChangeText={(text) =>
             setFormData((prev) => ({ ...prev, room: text }))
@@ -268,14 +266,12 @@ const addSubject = () => {
 
       {/* Online Schedule */}
       <View className="bg-white p-4 rounded-md mb-4">
-        <Text className="text-[18px] font-extrabold text-[#0A0A0A] mb-2">
+        <Text className="text-xl font-extrabold text-[#0A0A0A] mb-2">
           Online Schedule
         </Text>
         <View className="flex-row justify-between mb-3">
           <View className="flex-1 mr-2">
-            <Text className="text-[16px] font-medium text-[#0A0A0A] mb-1">
-              Day
-            </Text>
+            <Text className="text-lg font-medium text-[#0A0A0A] mb-1">Day</Text>
             <View className="border border-gray-300 rounded-md bg-white">
               <DropDown
                 selectedValue={formData.onlineScheduleDay}
@@ -292,7 +288,7 @@ const addSubject = () => {
           <View className="flex-1">
             <FormField
               formHeader="Time"
-              formHeaderStyle={"text-[16px] font-medium text-[#0A0A0A]"}
+              formHeaderStyle={"text-lg font-medium text-[#0A0A0A]"}
               value={formatTime(formData.onlineScheduleTime)} // Format Date object
               onFocus={() =>
                 setShowDatePickers((prev) => ({ ...prev, onlineTime: true }))
@@ -309,7 +305,7 @@ const addSubject = () => {
       <View className="mb-4 p-4 rounded-md bg-white">
         <FormField
           formHeader="Instructor"
-          formHeaderStyle={"text-[16px] font-medium text-[#0A0A0A]"}
+          formHeaderStyle={"text-lg font-medium text-[#0A0A0A]"}
           value={formData.instructor}
           handleChangeText={(text) =>
             setFormData((prev) => ({ ...prev, instructor: text }))

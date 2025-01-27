@@ -21,7 +21,7 @@ const SubjectCards = ({
       <View className="mb-4 items-center justify-center">
         <Image
           source={courseIcon}
-          className="w-[140px] h-[100px] rounded-lg shadow-lg shadow-slate-500 border border-slate-500"
+          className="w-36 h-28 rounded-lg shadow-lg shadow-slate-500 border border-slate-500"
         />
       </View>
 

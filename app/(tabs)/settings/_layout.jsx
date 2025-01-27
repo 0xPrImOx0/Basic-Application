@@ -28,27 +28,25 @@ const SettingsLayout = () => {
           header: () => (
             <View
               className={
-                "bg-[#FFFFFF] py-[10px] flex-row border-b-2 border-[#d9d9d9] justify-center items-center relative pb-[10px]"
+                "bg-[#FFFFFF] py-3 flex-row border-b-2 border-[#d9d9d9] justify-center items-center relative pb-3"
               }
             >
-              <View className={"absolute left-[10px]"}>
+              <View className={"absolute left-4"}>
                 <CustomButton
                   label="Back"
                   icon={Icons.arrow}
                   iconTint={"#0A0A0A"}
                   onPress={() => router.back()}
                   textStyle={"text-start"}
-                  iconStyle={"w-[20px] h-[20px] rotate-180 mr-[5px]"}
+                  iconStyle={"w-6 h-6 rotate-180 mr-1"}
                 />
               </View>
 
               <View className={"items-center"}>
-                <Text className={"font-extrabold text-[17px] text-[#0A0A0A]"}>
+                <Text className={"font-extrabold text-xl text-[#0A0A0A]"}>
                   Settings
                 </Text>
-                <Text
-                  className={"font-light italic text-[12px] text-[#6c6c6c]"}
-                >
+                <Text className={"font-light italic text-sm text-[#6c6c6c]"}>
                   Manage account info and security
                 </Text>
               </View>
@@ -63,27 +61,25 @@ const SettingsLayout = () => {
           header: () => (
             <View
               className={
-                "bg-[#FFFFFF] py-[10px] flex-row border-b-2 border-[#d9d9d9] justify-center items-center relative pb-[10px]"
+                "bg-[#FFFFFF] py-3 flex-row border-b-2 border-[#d9d9d9] justify-center items-center relative pb-3"
               }
             >
-              <View className={"absolute left-[10px]"}>
+              <View className={"absolute left-4"}>
                 <CustomButton
                   label="Back"
                   icon={Icons.arrow}
                   iconTint={"#0A0A0A"}
                   onPress={() => router.back()}
                   textStyle={"text-start"}
-                  iconStyle={"w-[20px] h-[20px] rotate-180 mr-[5px]"}
+                  iconStyle={"w-6 h-6 rotate-180 mr-1"}
                 />
               </View>
 
               <View className={"items-center"}>
-                <Text className={"font-extrabold text-[17px] text-[#0A0A0A]"}>
+                <Text className={"font-extrabold text-xl text-[#0A0A0A]"}>
                   Settings
                 </Text>
-                <Text
-                  className={"font-light italic text-[12px] text-[#6c6c6c]"}
-                >
+                <Text className={"font-light italic text-sm text-[#6c6c6c]"}>
                   Add Subject
                 </Text>
               </View>
@@ -98,27 +94,25 @@ const SettingsLayout = () => {
           header: () => (
             <View
               className={
-                "bg-[#FFFFFF] py-[10px] flex-row border-b-2 border-[#d9d9d9] justify-center items-center relative pb-[10px]"
+                "bg-[#FFFFFF] py-3 flex-row border-b-2 border-[#d9d9d9] justify-center items-center relative pb-3"
               }
             >
-              <View className={"absolute left-[10px]"}>
+              <View className={"absolute left-4"}>
                 <CustomButton
                   label="Back"
                   icon={Icons.arrow}
                   iconTint={"#0A0A0A"}
                   onPress={() => router.back()}
                   textStyle={"text-start"}
-                  iconStyle={"w-[20px] h-[20px] rotate-180 mr-[5px]"}
+                  iconStyle={"w-6 h-6 rotate-180 mr-1"}
                 />
               </View>
 
               <View className={"items-center"}>
-                <Text className={"font-extrabold text-[17px] text-[#0A0A0A]"}>
+                <Text className={"font-extrabold text-xl text-[#0A0A0A]"}>
                   Settings
                 </Text>
-                <Text
-                  className={"font-light italic text-[12px] text-[#6c6c6c]"}
-                >
+                <Text className={"font-light italic text-sm text-[#6c6c6c]"}>
                   Delete Subject
                 </Text>
               </View>

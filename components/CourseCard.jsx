@@ -26,7 +26,7 @@ const CourseCard = ({
       >
         {/* Large Centered Icon */}
         <View
-          className="self-center justify-center items-center bg-gray-100 rounded-b-2xl"
+          className="self-center justify-center items-center bg-gray-100 rounded-b-2xl relative"
           style={{
             width: SCREEN_WIDTH * 0.5,
             height: SCREEN_WIDTH * 0.5,
@@ -45,16 +45,16 @@ const CourseCard = ({
               </Text>
             </View>
           )}
-        </View>
 
-        {/* Close Button */}
-        <CustomButton
-          icon={Icons.close}
-          iconTint={"#FF0004"}
-          styles={"absolute left-[88%] top-[-30%] w-7 h-7"}
-          iconStyle={"w-7 h-7"}
-          onPress={onPress}
-        />
+          {/* Close Button */}
+          <CustomButton
+            icon={Icons.close}
+            iconTint={"#FF0004"}
+            styles={"absolute left-[75%] -top-[75%] w-7 h-7"}
+            iconStyle={"w-7 h-7"}
+            onPress={onPress}
+          />
+        </View>
 
         {/* Course Details Container */}
         <View className="p-5">
