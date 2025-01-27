@@ -23,7 +23,8 @@ const Container = ({
     <SafeAreaView className={`bg-[${bg}] h-full flex-1 ${savStyles}`}>
       <KeyboardAvoidingView
         className={"flex-1 justify-center"}
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        behavior={Platform.OS === "ios" ? "padding" : "padding"}
+        keyboardVerticalOffset={32}
       >
         {scroll ? (
           <ScrollView

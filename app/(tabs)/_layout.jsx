@@ -38,6 +38,7 @@ const TabsLayout = () => {
           paddingInline: 20,
           paddingTop: 20,
         },
+        tabBarHideOnKeyboard: true,
         tabBarButton: (props) => (
           <TouchableOpacity {...props} activeOpacity={0.5}>
             <View>{props.children}</View>

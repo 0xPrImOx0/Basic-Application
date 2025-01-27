@@ -2,12 +2,10 @@ import React, { useState, useCallback, useRef } from "react";
 import {
   View,
   Text,
-  TextInput,
-  TouchableOpacity,
-  ScrollView,
   Image,
   Platform,
   Alert,
+  KeyboardAvoidingView,
 } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import DateTimePicker from "@react-native-community/datetimepicker";
@@ -125,8 +123,6 @@ const addSubject = () => {
   };
 
   return (
-    // <View className="flex-1 p-4 bg-gray-100">
-    // <ScrollView keyboardShouldPersistTaps="handled">
     <Container savStyles={"px-4 bg-[#d9d9d9]"} bg={"#d9d9d9"} pt={"15"}>
       {/* Icon Upload */}
       <View className="mb-4 py-3 bg-white rounded-md px-3">
@@ -344,8 +340,6 @@ const addSubject = () => {
         />
       )}
     </Container>
-    /* </ScrollView> */
-    /* // </View> */
   );
 };
 

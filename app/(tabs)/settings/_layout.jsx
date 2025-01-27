@@ -55,6 +55,74 @@ const SettingsLayout = () => {
         }}
       />
       <Stack.Screen
+        name="editProfile"
+        options={{
+          title: "Edit Profile",
+          header: () => (
+            <View
+              className={
+                "bg-[#FFFFFF] py-3 flex-row border-b-2 border-[#d9d9d9] justify-center items-center relative pb-3"
+              }
+            >
+              <View className={"absolute left-4"}>
+                <CustomButton
+                  label="Back"
+                  icon={Icons.arrow}
+                  iconTint={"#0A0A0A"}
+                  onPress={() => router.back()}
+                  textStyle={"text-start"}
+                  iconStyle={"w-6 h-6 rotate-180 mr-1"}
+                />
+              </View>
+
+              <View className={"items-center"}>
+                <Text className={"font-extrabold text-xl text-[#0A0A0A]"}>
+                  Settings
+                </Text>
+                <Text className={"font-light italic text-sm text-[#6c6c6c]"}>
+                  Edit Profile
+                </Text>
+              </View>
+            </View>
+          ),
+        }}
+      />
+      <Stack.Screen
+        name="changePassword"
+        options={{
+          title: "Change Password",
+          header: () => (
+            <View
+              className={
+                "bg-[#FFFFFF] py-3 flex-row border-b-2 border-[#d9d9d9] justify-center items-center relative pb-3"
+              }
+            >
+              <View className={"absolute left-4"}>
+                <CustomButton
+                  label="Back"
+                  icon={Icons.arrow}
+                  iconTint={"#0A0A0A"}
+                  onPress={() => router.back()}
+                  textStyle={"text-start"}
+                  iconStyle={"w-6 h-6 rotate-180 mr-1"}
+                />
+              </View>
+
+              <View className={"items-center"}>
+                <Text className={"font-extrabold text-xl text-[#0A0A0A]"}>
+                  Settings
+                </Text>
+                <Text
+                  className={"font-light italic text-sm text-[#6c6c6c] px-2"}
+                >
+                  Change Password
+                </Text>
+              </View>
+            </View>
+          ),
+        }}
+      />
+      <Stack.Screen
         name="addSubject"
         options={{
           title: "Add Account",

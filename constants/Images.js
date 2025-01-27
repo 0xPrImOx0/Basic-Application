@@ -1,5 +1,6 @@
 import onBoard from "../assets/images/onBoard.png";
 import studGrad from "../assets/images/studGrad.jpg";
+import cover from "../assets/images/cover.jpg";
 import capstone from "../assets/images/capstone.jpg";
 import ipt from "../assets/images/ipt.png";
 import appdev from "../assets/images/appdev.png";
@@ -19,6 +20,7 @@ import pr6 from "../assets/images/pr6.jpg";
 export default {
   onBoard,
   studGrad,
+  cover,
   capstone,
   ipt,
   appdev,

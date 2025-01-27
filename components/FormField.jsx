@@ -17,6 +17,8 @@ const FormField = forwardRef(
       letterCase = "none",
       onBlur,
       onFocus,
+      keyboardType,
+      type,
     },
     ref
   ) => {
@@ -39,7 +41,8 @@ const FormField = forwardRef(
           } 
           ${
             placeholder === "Enter your Password" ||
-            placeholder === "Confirm your Password"
+            placeholder === "Confirm your Password" ||
+            type === "password"
               ? "flex-row"
               : ""
           } ${styles}`}
@@ -51,9 +54,13 @@ const FormField = forwardRef(
             placeholderTextColor={"#6C6C6C"}
             onChangeText={handleChangeText}
             autoCapitalize={letterCase}
+            keyboardType={keyboardType}
             secureTextEntry={
-              (placeholder === "Enter your Password" && !showPassword) ||
-              (placeholder === "Confirm your Password" && !showConfirmPassword)
+              ((placeholder === "Enter your Password" || type === "password") &&
+                !showPassword) ||
+              ((placeholder === "Confirm your Password" ||
+                type === "password") &&
+                !showConfirmPassword)
             }
             onBlur={onBlur}
             onFocus={onFocus}
@@ -61,7 +68,8 @@ const FormField = forwardRef(
           />
 
           {placeholder === "Enter your Password" ||
-          placeholder === "Confirm your Password" ? (
+          placeholder === "Confirm your Password" ||
+          type === "password" ? (
             <CustomButton
               icon={
                 showPassword || showConfirmPassword ? Icons.eye : Icons.eyeHide
