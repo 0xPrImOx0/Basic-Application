@@ -78,7 +78,7 @@ const editProfile = () => {
 
         <CustomButton
           label={"Change Cover"}
-          styles={`absolute bottom-[15%] left-[73.5%] bg-black/50 px-2 py-2 rounded-lg w-28`}
+          styles={`relative bottom-[15%] left-[72%] bg-black/50 px-2 py-2 rounded-lg w-28`}
           textStyle={"text-white text-sm font-medium w-full"}
           onPress={() => pickImage("cover")}
         />

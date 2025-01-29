@@ -84,7 +84,7 @@ const manageAccount = () => {
               iconTint={"#FFFFFF"}
               textStyle={"font-medium text-base text-[#FFFFFF]"}
               iconStyle={"w-6 h-6 mr-3"}
-              onPress={() => router.push("/settings/editProfile")}
+              onPress={()  => router.push("/settings/editProfile")}
             />
 
             <CustomButton
