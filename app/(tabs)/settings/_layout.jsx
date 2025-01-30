@@ -159,6 +159,7 @@ const SettingsLayout = () => {
         name="delSubject"
         options={{
           title: "Delete Account",
+          presentation: "transparentModal",
           header: () => (
             <View
               className={

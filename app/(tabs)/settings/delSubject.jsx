@@ -9,10 +9,14 @@ import {
 } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 import CustomButton from "../../../components/CustomButton";
+import Toast from "react-native-toast-message";
+import Container from "../../../components/Container";
+import { router } from "expo-router";
 
 const delSubject = () => {
   const [isModalVisible, setModalVisible] = useState(false);
   const [selectedSubject, setSelectedSubject] = useState("");
+  const [toastVisible, setToastVisible] = useState(false);
 
   const subjects = [
     "IT321",
@@ -48,7 +52,7 @@ const delSubject = () => {
   };
 
   return (
-    <View className={"m-10"}>
+    <Container ph={20} pt={20} pb={20}>
       <CustomButton
         label={"Delete Subject"}
         styles={"rounded-md p-3 items-center bg-red-500"}
@@ -101,7 +105,7 @@ const delSubject = () => {
           </View>
         </View>
       </Modal>
-    </View>
+    </Container>
   );
 };
 
