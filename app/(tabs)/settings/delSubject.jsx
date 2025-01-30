@@ -1,22 +1,16 @@
 import React, { useState } from "react";
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  Modal,
-  ScrollView,
-  Alert,
-} from "react-native";
+import { View, Text, TouchableOpacity, ScrollView, Alert } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 import CustomButton from "../../../components/CustomButton";
 import Toast from "react-native-toast-message";
 import Container from "../../../components/Container";
 import { router } from "expo-router";
+import DropDown from "../../../components/DropDown";
+import Modal from "react-native-modal";
 
 const delSubject = () => {
   const [isModalVisible, setModalVisible] = useState(false);
-  const [selectedSubject, setSelectedSubject] = useState("");
-  const [toastVisible, setToastVisible] = useState(false);
+  const [selectedSubject, setSelectedSubject] = useState("IT321");
 
   const subjects = [
     "IT321",
@@ -28,29 +22,6 @@ const delSubject = () => {
     "FreeElec",
   ];
 
-  const handleDelete = () => {
-    // Confirmation Alert
-    Alert.alert(
-      "Confirm Deletion",
-      `Are you sure you want to delete ${selectedSubject}? This action cannot be undone.`,
-      [
-        {
-          text: "Cancel",
-          style: "cancel",
-        },
-        {
-          text: "Delete",
-          style: "destructive",
-          onPress: () => {
-            // Actual delete logic here
-            console.log(`Deleting subject: ${selectedSubject}`);
-            setModalVisible(false);
-          },
-        },
-      ]
-    );
-  };
-
   return (
     <Container ph={20} pt={20} pb={20}>
       <CustomButton
@@ -61,10 +32,11 @@ const delSubject = () => {
       />
 
       <Modal
-        visible={isModalVisible}
-        transparent={true}
-        animationType="slide"
-        onRequestClose={() => setModalVisible(false)}
+        isVisible={isModalVisible}
+        animationIn={"pulse"}
+        animationOut={"fadeOutDown"}
+        style={{ margin: 0 }}
+        hasBackdrop={false}
       >
         <View className="flex-1 justify-center items-center bg-black/50">
           <View className="bg-white w-11/12 rounded-lg p-4">
@@ -73,34 +45,38 @@ const delSubject = () => {
             </Text>
 
             <View className="border border-gray-300 rounded-md mb-4">
-              <Picker
+              <DropDown
                 selectedValue={selectedSubject}
                 onValueChange={(itemValue) => setSelectedSubject(itemValue)}
-              >
-                <Picker.Item label="Select Subject" value="" />
-                {subjects.map((subject) => (
-                  <Picker.Item key={subject} label={subject} value={subject} />
-                ))}
-              </Picker>
+                dataList={subjects}
+              />
             </View>
 
             <View className="flex-row justify-between">
-              <TouchableOpacity
+              <CustomButton
+                label={"Cancel"}
+                textStyle={"text-black text-center"}
+                styles={"bg-gray-300 p-3 rounded-md w-5/12"}
                 onPress={() => setModalVisible(false)}
-                className="bg-gray-300 p-3 rounded-md w-5/12"
-              >
-                <Text className="text-black text-center">Cancel</Text>
-              </TouchableOpacity>
+              />
 
-              <TouchableOpacity
-                onPress={handleDelete}
-                disabled={!selectedSubject}
-                className={`p-3 rounded-md w-5/12 ${
-                  selectedSubject ? "bg-red-500" : "bg-red-300"
-                }`}
-              >
-                <Text className="text-white text-center">Delete</Text>
-              </TouchableOpacity>
+              <CustomButton
+                label={"Delete"}
+                textStyle={"text-white text-center"}
+                onPress={() => {
+                  setModalVisible(false);
+                  setTimeout(() => {
+                    Toast.show({
+                      type: "success",
+                      text1: "Subject Deleted",
+                      text2: `${
+                        selectedSubject || "Subject"
+                      } has been deleted successfully`,
+                    });
+                  }, 100);
+                }}
+                styles={`p-3 rounded-md w-5/12 bg-red-500`}
+              />
             </View>
           </View>
         </View>
