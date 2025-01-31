@@ -19,6 +19,7 @@ const FormField = forwardRef(
       onFocus,
       keyboardType,
       type,
+      inputMode,
     },
     ref
   ) => {
@@ -27,25 +28,29 @@ const FormField = forwardRef(
 
     return (
       <View className={`items-start ${containerStyles}`}>
-        <View>
+        <View className={"flex-row justify-between w-full"}>
           <Text
             className={`font-bold text-base text-[#0A0A0A] ${formHeaderStyle}`}
           >
             {formHeader}
           </Text>
+          {(value || error) && (
+            <Image
+              source={error ? Icons.x : Icons.check}
+              className={"h-4 w-4 self-center"}
+            />
+          )}
         </View>
 
         <View
           className={`border border-[#D9D9D9] w-full h-12 rounded-md ${
-            error ? "border-2 border-[#F34336]" : "focus:border-[#3bf5c6]"
+            error
+              ? "border-[#f8877f] bg-[#fdc4c438]"
+              : value
+              ? "border-[#3bf5c6] bg-[#d3f7ee3a]"
+              : "border-[#D9D9D9]"
           } 
-          ${
-            placeholder === "Enter your Password" ||
-            placeholder === "Confirm your Password" ||
-            type === "password"
-              ? "flex-row"
-              : ""
-          } ${styles}`}
+          ${type === "password" ? "flex-row" : ""} ${styles}`}
         >
           <TextInput
             className="text-[#0A0A0A] py-3 pl-3 text-lg flex-1 font-normal"
@@ -55,21 +60,18 @@ const FormField = forwardRef(
             onChangeText={handleChangeText}
             autoCapitalize={letterCase}
             keyboardType={keyboardType}
+            autoCorrect={false}
             secureTextEntry={
-              ((placeholder === "Enter your Password" || type === "password") &&
-                !showPassword) ||
-              ((placeholder === "Confirm your Password" ||
-                type === "password") &&
-                !showConfirmPassword)
+              (type === "password" && !showPassword) ||
+              (type === "password" && !showConfirmPassword)
             }
             onBlur={onBlur}
             onFocus={onFocus}
             ref={ref}
+            inputMode={inputMode}
           />
 
-          {placeholder === "Enter your Password" ||
-          placeholder === "Confirm your Password" ||
-          type === "password" ? (
+          {type === "password" ? (
             <CustomButton
               icon={
                 showPassword || showConfirmPassword ? Icons.eye : Icons.eyeHide
@@ -86,6 +88,12 @@ const FormField = forwardRef(
             ""
           )}
         </View>
+
+        {error && (
+          <Text className={"text-red-500 mt-1 -mb-2 font-normal text-sm"}>
+            {error}
+          </Text>
+        )}
       </View>
     );
   }

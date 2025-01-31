@@ -1,17 +1,63 @@
 import { View, Text } from "react-native";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Container from "../../components/Container";
 import CustomButton from "../../components/CustomButton";
 import FormField from "../../components/FormField";
 import { router } from "expo-router";
+import { useForm, Controller } from "react-hook-form";
+import { signInSchema } from "../../utils/validate";
+import { yupResolver } from "@hookform/resolvers/yup";
 
 const signIn = () => {
-  const [form, setForm] = useState({
-    email: "",
-    password: "",
-    emailError: "",
-    passwordError: "",
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    resolver: yupResolver(signInSchema),
+    mode: "onTouched",
+    reValidateMode: "onChange",
+    defaultValues: {
+      fullName: "",
+      email: "",
+      password: "",
+      confirmPassword: "",
+    },
   });
+
+  const onSubmit = async (data) => {
+    setIsLoading(true);
+    await new Promise((resolve) => setTimeout(resolve, 10000)); // Simulate 10s API request
+    console.log(data);
+
+    setLoadingText("Login");
+    router.push("/home");
+    setIsLoading(false);
+  };
+
+  const [loadingText, setLoadingText] = useState("Login");
+  const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    let dotIndex = 1;
+    let interval;
+
+    if (isLoading) {
+      interval = setInterval(() => {
+        setLoadingText(`Logging in${".".repeat(dotIndex)}`);
+        dotIndex = dotIndex === 3 ? 1 : dotIndex + 1;
+      }, 300); // Change dots every 3ms
+
+      setTimeout(() => {
+        clearInterval(interval); // Stop changing dots after 10 seconds
+        setIsLoading(false);
+        setLoadingText("Create Account");
+      }, 10000); // 10 seconds duration
+    }
+
+    // Cleanup interval when not loading
+    return () => clearInterval(interval);
+  }, [isLoading]);
 
   return (
     <Container centerContent={true} centerHorizontal={true}>
@@ -41,32 +87,49 @@ const signIn = () => {
         </View>
 
         <View className={"my-8"}>
-          <FormField
-            formHeader={"Email"}
-            placeholder={"Enter your Email"}
-            value={form.email}
-            handleChangeText={(e) => setForm({ ...form, email: e })}
-            styles="mt-1 mb-6 w-full"
-            keyboardType="email-address"
-            error={form.emailError}
-            // onBlur={() => setIsEmailClicked(true)}
+          <Controller
+            name="email"
+            control={control}
+            render={({ field: { onChange, onBlur, value } }) => (
+              <FormField
+                formHeader={"Email"}
+                placeholder={"Enter your Email"}
+                containerStyles={"mb-6"}
+                styles="mt-1"
+                keyboardType="email-address"
+                error={errors.email?.message}
+                value={value}
+                onBlur={onBlur}
+                handleChangeText={onChange}
+              />
+            )}
           />
 
-          <FormField
-            formHeader={"Password"}
-            placeholder={"Enter your Password"}
-            value={form.password}
-            handleChangeText={(e) => setForm({ ...form, password: e })}
-            styles="mt-1 w-full"
-            error={form.passwordError}
-            // onBlur={() => setIsPasswordClicked(true)}
+          <Controller
+            name="password"
+            control={control}
+            render={({ field: { onChange, onBlur, value } }) => (
+              <FormField
+                formHeader={"Password"}
+                placeholder={"Enter your Password"}
+                type="password"
+                containerStyles={"mb-6"}
+                styles="mt-1"
+                error={errors.password?.message}
+                value={value}
+                onBlur={onBlur}
+                handleChangeText={onChange}
+              />
+            )}
           />
         </View>
 
         <CustomButton
-          label="Login"
+          label={loadingText}
           styles="w-full bg-[#161515] h-12 text-base mb-6"
-          textStyle="font-medium text-[#fff]"
+          textStyle={`font-medium text-[#fff] ${isLoading && "text-xl"}`}
+          onPress={handleSubmit(onSubmit)}
+          disabled={isLoading}
         />
         <Text className={"font-light text-base text-[#6C6C6C] text-justify"}>
           By continuing, you agree to our Terms of Service and Privacy Policy.

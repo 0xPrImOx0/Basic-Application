@@ -7,6 +7,7 @@ import Container from "../../../components/Container";
 import { router } from "expo-router";
 import DropDown from "../../../components/DropDown";
 import Modal from "react-native-modal";
+import Loader from "../../../components/Loader";
 
 const delSubject = () => {
   const [isModalVisible, setModalVisible] = useState(false);
@@ -22,12 +23,25 @@ const delSubject = () => {
     "FreeElec",
   ];
 
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleAsyncOperation = async () => {
+    setIsLoading(true);
+    try {
+      await new Promise((resolve) => setTimeout(resolve, 5000)); // Waits for 10 seconds
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <Container ph={20} pt={20} pb={20}>
+      <Loader isLoading={isLoading} size={40} />
+
       <CustomButton
         label={"Delete Subject"}
         styles={"rounded-md p-3 items-center bg-red-500"}
-        onPress={() => setModalVisible(true)}
+        onPress={handleAsyncOperation}
         textStyle={"text-white text-center"}
       />
 
