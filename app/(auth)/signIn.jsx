@@ -3,12 +3,16 @@ import React, { useState, useEffect } from "react";
 import Container from "../../components/Container";
 import CustomButton from "../../components/CustomButton";
 import FormField from "../../components/FormField";
-import { router } from "expo-router";
+import { Redirect, router } from "expo-router";
 import { useForm, Controller } from "react-hook-form";
 import { signInSchema } from "../../utils/validate";
 import { yupResolver } from "@hookform/resolvers/yup";
+import { useAuth } from "../../services/auth-provider";
 
 const signIn = () => {
+  const { session } = useAuth();
+  if (session) return <Redirect href="" />;
+
   const {
     control,
     handleSubmit,

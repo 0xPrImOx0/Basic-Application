@@ -1,14 +1,22 @@
-import { View, Text } from "react-native";
+import { View, Text, ActivityIndicator } from "react-native";
 import React, { useState, useEffect } from "react";
 import Container from "../../components/Container";
 import CustomButton from "../../components/CustomButton";
 import FormField from "../../components/FormField";
-import { router } from "expo-router";
+import { Redirect, router } from "expo-router";
 import { useForm, Controller } from "react-hook-form";
 import { signUpSchema } from "../../utils/validate";
 import { yupResolver } from "@hookform/resolvers/yup";
+import { createAccount } from "../../services/auth";
+import Toast from "react-native-toast-message";
+import supabase from "../../lib/supabase";
+import { useAuth } from "../../services/auth-provider";
 
 const signUp = () => {
+  const { session, mounting } = useAuth();
+
+  if (session) return <Redirect href="/home" />;
+
   const {
     control,
     handleSubmit,
@@ -27,40 +35,70 @@ const signUp = () => {
 
   const onSubmit = async (data) => {
     setIsLoading(true);
-    await new Promise((resolve) => setTimeout(resolve, 10000)); // Simulate 10s API request
-    console.log(data);
+    // await new Promise((resolve) => setTimeout(resolve, 10000)); // Simulate 10s API request
 
-    setLoadingText("Create Account");
-    router.push("/home");
-    setIsLoading(false);
+    try {
+      const { error } = await createAccount(
+        data.email,
+        data.password,
+        data.fullName
+      );
+
+      if (error) {
+        return Toast.show({
+          type: "error",
+          text1: error.message || "An error occurred",
+        });
+      }
+
+      Toast.show({
+        type: "success",
+        text1: "Signed Up Successfully!",
+      });
+    } catch (error) {
+      Toast.show({
+        type: "error",
+        text1: error.message || "An unexpected error occurred",
+      });
+    } finally {
+      console.log(data);
+      setIsLoading(false);
+    }
+
+    // console.log(data);
+
+    // setLoadingText("Create Account");
+    // router.push("/home");
+    // setIsLoading(false);
   };
 
   const [loadingText, setLoadingText] = useState("Creating account");
   const [isLoading, setIsLoading] = useState(false);
 
-  useEffect(() => {
-    let dotIndex = 1;
-    let interval;
+  // useEffect(() => {
+  //   let dotIndex = 1;
+  //   let interval;
 
-    if (isLoading) {
-      interval = setInterval(() => {
-        setLoadingText(`Creating account${".".repeat(dotIndex)}`);
-        dotIndex = dotIndex === 3 ? 1 : dotIndex + 1;
-      }, 300); // Change dots every 3ms
+  //   if (isLoading) {
+  //     interval = setInterval(() => {
+  //       setLoadingText(`Creating account${".".repeat(dotIndex)}`);
+  //       dotIndex = dotIndex === 3 ? 1 : dotIndex + 1;
+  //     }, 300); // Change dots every 3ms
 
-      setTimeout(() => {
-        clearInterval(interval); // Stop changing dots after 10 seconds
-        setIsLoading(false);
-        setLoadingText("Create Account");
-      }, 10000); // 10 seconds duration
-    }
+  //     setTimeout(() => {
+  //       clearInterval(interval); // Stop changing dots after 10 seconds
+  //       setIsLoading(false);
+  //       setLoadingText("Create Account");
+  //     }, 10000); // 10 seconds duration
+  //   }
 
-    // Cleanup interval when not loading
-    return () => clearInterval(interval);
-  }, [isLoading]);
+  //   // Cleanup interval when not loading
+  //   return () => clearInterval(interval);
+  // }, [isLoading]);
 
   return (
     <Container centerContent={true} centerHorizontal={true}>
+      {mounting && <ActivityIndicator />}
       <View className="border-[#D9D9D9] border rounded-2xl w-[85%] h-auto p-5">
         <View>
           <Text className={"font-extrabold text-2xl"}>Hello, There!</Text>
@@ -161,11 +199,11 @@ const signUp = () => {
         </View>
 
         <CustomButton
-          label={loadingText}
+          label="Create Account"
           styles="w-full bg-[#161515] h-12 text-base mb-6"
-          textStyle={`font-medium text-[#fff] ${isLoading && "text-xl"}`}
+          textStyle={`font-medium text-[#fff] ${isSubmitting && "text-xl"}`}
           onPress={handleSubmit(onSubmit)}
-          disabled={isLoading}
+          disabled={isSubmitting}
         />
 
         <Text className={"font-light text-base text-[#6C6C6C] text-justify"}>

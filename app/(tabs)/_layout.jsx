@@ -1,7 +1,14 @@
 import React from "react";
-import { Stack, Tabs } from "expo-router";
-import { View, Image, Text, TouchableOpacity } from "react-native";
+import { Redirect, Stack, Tabs } from "expo-router";
+import {
+  View,
+  Image,
+  Text,
+  TouchableOpacity,
+  ActivityIndicator,
+} from "react-native";
 import Icons from "../../constants/Icons";
+import { useAuth } from "../../services/auth-provider";
 
 const TabIcon = ({ icon, color, name, focused }) => {
   return (
@@ -24,6 +31,11 @@ const TabIcon = ({ icon, color, name, focused }) => {
 };
 
 const TabsLayout = () => {
+  const { session, mounting } = useAuth();
+
+  if (mounting) return <ActivityIndicator />;
+  if (!session) return <Redirect href="/auth" />;
+
   return (
     <Tabs
       screenOptions={{

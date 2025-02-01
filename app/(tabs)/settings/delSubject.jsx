@@ -7,7 +7,6 @@ import Container from "../../../components/Container";
 import { router } from "expo-router";
 import DropDown from "../../../components/DropDown";
 import Modal from "react-native-modal";
-import Loader from "../../../components/Loader";
 
 const delSubject = () => {
   const [isModalVisible, setModalVisible] = useState(false);
@@ -36,12 +35,10 @@ const delSubject = () => {
 
   return (
     <Container ph={20} pt={20} pb={20}>
-      <Loader isLoading={isLoading} size={40} />
-
       <CustomButton
         label={"Delete Subject"}
         styles={"rounded-md p-3 items-center bg-red-500"}
-        onPress={handleAsyncOperation}
+        onPress={() => setModalVisible(true)}
         textStyle={"text-white text-center"}
       />
 
