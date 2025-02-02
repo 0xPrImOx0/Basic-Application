@@ -3,20 +3,14 @@ import React, { useState, useEffect } from "react";
 import Container from "../../components/Container";
 import CustomButton from "../../components/CustomButton";
 import FormField from "../../components/FormField";
-import { Redirect, router } from "expo-router";
+import { router } from "expo-router";
 import { useForm, Controller } from "react-hook-form";
 import { signUpSchema } from "../../utils/validate";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { createAccount } from "../../services/auth";
+import { createAccount, logIn } from "../../services/auth";
 import Toast from "react-native-toast-message";
-import supabase from "../../lib/supabase";
-import { useAuth } from "../../services/auth-provider";
 
 const signUp = () => {
-  const { session, mounting } = useAuth();
-
-  if (session) return <Redirect href="/home" />;
-
   const {
     control,
     handleSubmit,
@@ -32,13 +26,14 @@ const signUp = () => {
       confirmPassword: "",
     },
   });
+  const [loadingText, setLoadingText] = useState("Create account");
+  const [isLoading, setIsLoading] = useState(false);
 
   const onSubmit = async (data) => {
     setIsLoading(true);
-    // await new Promise((resolve) => setTimeout(resolve, 10000)); // Simulate 10s API request
 
     try {
-      const { error } = await createAccount(
+      const { user, error } = await createAccount(
         data.email,
         data.password,
         data.fullName
@@ -51,54 +46,43 @@ const signUp = () => {
         });
       }
 
+      // console.log(user); // This is to log the user data
+
       Toast.show({
         type: "success",
         text1: "Signed Up Successfully!",
       });
+
+      router.replace("/home");
     } catch (error) {
       Toast.show({
         type: "error",
         text1: error.message || "An unexpected error occurred",
       });
     } finally {
-      console.log(data);
+      // console.log(data); //This is to log the hook form data
       setIsLoading(false);
     }
-
-    // console.log(data);
-
-    // setLoadingText("Create Account");
-    // router.push("/home");
-    // setIsLoading(false);
   };
 
-  const [loadingText, setLoadingText] = useState("Creating account");
-  const [isLoading, setIsLoading] = useState(false);
+  useEffect(() => {
+    let dotIndex = 1;
+    let interval;
 
-  // useEffect(() => {
-  //   let dotIndex = 1;
-  //   let interval;
+    if (isLoading) {
+      interval = setInterval(() => {
+        setLoadingText(`Creating Account${".".repeat(dotIndex)}`);
+        dotIndex = dotIndex === 3 ? 1 : dotIndex + 1;
+      }, 300); // Change dots every 300ms
+    }
 
-  //   if (isLoading) {
-  //     interval = setInterval(() => {
-  //       setLoadingText(`Creating account${".".repeat(dotIndex)}`);
-  //       dotIndex = dotIndex === 3 ? 1 : dotIndex + 1;
-  //     }, 300); // Change dots every 3ms
-
-  //     setTimeout(() => {
-  //       clearInterval(interval); // Stop changing dots after 10 seconds
-  //       setIsLoading(false);
-  //       setLoadingText("Create Account");
-  //     }, 10000); // 10 seconds duration
-  //   }
-
-  //   // Cleanup interval when not loading
-  //   return () => clearInterval(interval);
-  // }, [isLoading]);
+    // Cleanup when isLoading becomes false
+    return () => clearInterval(interval);
+  }, [isLoading]);
 
   return (
     <Container centerContent={true} centerHorizontal={true}>
-      {mounting && <ActivityIndicator />}
+      {isLoading && <ActivityIndicator size={"large"} isLoading={isLoading} />}
       <View className="border-[#D9D9D9] border rounded-2xl w-[85%] h-auto p-5">
         <View>
           <Text className={"font-extrabold text-2xl"}>Hello, There!</Text>
@@ -140,6 +124,7 @@ const signUp = () => {
                 value={value}
                 onBlur={onBlur}
                 handleChangeText={onChange}
+                editable={!isSubmitting}
               />
             )}
           />
@@ -158,6 +143,7 @@ const signUp = () => {
                 value={value}
                 onBlur={onBlur}
                 handleChangeText={onChange}
+                editable={!isSubmitting}
               />
             )}
           />
@@ -176,6 +162,7 @@ const signUp = () => {
                 value={value}
                 onBlur={onBlur}
                 handleChangeText={onChange}
+                editable={!isSubmitting}
               />
             )}
           />
@@ -193,13 +180,14 @@ const signUp = () => {
                 value={value}
                 onBlur={onBlur}
                 handleChangeText={onChange}
+                editable={!isSubmitting}
               />
             )}
           />
         </View>
 
         <CustomButton
-          label="Create Account"
+          label={loadingText}
           styles="w-full bg-[#161515] h-12 text-base mb-6"
           textStyle={`font-medium text-[#fff] ${isSubmitting && "text-xl"}`}
           onPress={handleSubmit(onSubmit)}

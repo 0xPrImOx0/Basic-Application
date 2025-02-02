@@ -1,0 +1,31 @@
+const data = {
+  access_token:
+    "eyJhbGciOiJIUzI1NiIsImtpZCI6Ik9icStzMHZXRWljdGhPVkwiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJodHRwczovL3hqdnZvcWhoY3V0cW5nY3l0ZHFjLnN1cGFiYXNlLmNvL2F1dGgvdjEiLCJzdWIiOiI0YmJkOWEzZi1lZTY3LTQ4MGMtYTAxMC05YmFmZDcyMzE4ZjYiLCJhdWQiOiJhdXRoZW50aWNhdGVkIiwiZXhwIjoxNzM4NDc3NjIyLCJpYXQiOjE3Mzg0NzQwMjIsImVtYWlsIjoiZGF1Zy5yZXkzNEBnbWFpbC5jb20iLCJwaG9uZSI6IiIsImFwcF9tZXRhZGF0YSI6eyJwcm92aWRlciI6ImVtYWlsIiwicHJvdmlkZXJzIjpbImVtYWlsIl19LCJ1c2VyX21ldGFkYXRhIjp7ImRpc3BsYXlfbmFtZSI6IlJleSBEYXVnIiwiZW1haWwiOiJkYXVnLnJleTM0QGdtYWlsLmNvbSIsImVtYWlsX3ZlcmlmaWVkIjp0cnVlLCJwaG9uZV92ZXJpZmllZCI6ZmFsc2UsInN1YiI6IjRiYmQ5YTNmLWVlNjctNDgwYy1hMDEwLTliYWZkNzIzMThmNiJ9LCJyb2xlIjoiYXV0aGVudGljYXRlZCIsImFhbCI6ImFhbDEiLCJhbXIiOlt7Im1ldGhvZCI6InBhc3N3b3JkIiwidGltZXN0YW1wIjoxNzM4NDc0MDIyfV0sInNlc3Npb25faWQiOiJjOWVjYTFmNC02MDk2LTQzMmItOWE4My03MDlhYzhiM2EyMmEiLCJpc19hbm9ueW1vdXMiOmZhbHNlfQ.E_bDgRuXLNv9WrCdUJFzEHjLAtRaHn1vf_0HGVIWfGk",
+  expires_at: 1738477622,
+  expires_in: 3600,
+  refresh_token: "kvXJ2Hbp-neoSopi2OjN5g",
+  token_type: "bearer",
+  user: {
+    app_metadata: { provider: "email", providers: [Array] },
+    aud: "authenticated",
+    confirmation_sent_at: "2025-02-02T01:05:42.203841Z",
+    confirmed_at: "2025-02-02T01:07:50.556915Z",
+    created_at: "2025-02-02T01:05:42.193172Z",
+    email: "daug.rey34@gmail.com",
+    email_confirmed_at: "2025-02-02T01:07:50.556915Z",
+    id: "4bbd9a3f-ee67-480c-a010-9bafd72318f6",
+    identities: [[Object]],
+    is_anonymous: false,
+    last_sign_in_at: "2025-02-02T05:27:02.832675691Z",
+    phone: "",
+    role: "authenticated",
+    updated_at: "2025-02-02T05:27:02.838607Z",
+    user_metadata: {
+      display_name: "Rey Daug",
+      email: "daug.rey34@gmail.com",
+      email_verified: true,
+      phone_verified: false,
+      sub: "4bbd9a3f-ee67-480c-a010-9bafd72318f6",
+    },
+  },
+};

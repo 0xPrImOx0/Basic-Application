@@ -1,5 +1,5 @@
-import React from "react";
-import { Redirect, Stack, Tabs } from "expo-router";
+import React, { useEffect } from "react";
+import { Redirect, router, Stack, Tabs } from "expo-router";
 import {
   View,
   Image,
@@ -31,10 +31,13 @@ const TabIcon = ({ icon, color, name, focused }) => {
 };
 
 const TabsLayout = () => {
-  const { session, mounting } = useAuth();
+  const { session } = useAuth();
 
-  if (mounting) return <ActivityIndicator />;
-  if (!session) return <Redirect href="/auth" />;
+  useEffect(() => {
+    if (session) {
+      router.replace("/home");
+    }
+  }, [session]);
 
   return (
     <Tabs

@@ -4,18 +4,18 @@ import supabase from "../lib/supabase";
 // Signup function
 export async function createAccount(email, password, fullName) {
   // Sign up the user with email and password
-  const { user, error: signupError } = await supabase.auth.signUp({
+  const { data: user, error: signupError } = await supabase.auth.signUp({
     email,
     password,
     options: {
       data: {
         display_name: fullName, // Store full name in the display_name column
+        email_verified: true,
       },
     },
   });
 
   if (signupError) {
-    console.error("Signup error:", signupError);
     return { error: signupError };
   }
 
@@ -24,16 +24,21 @@ export async function createAccount(email, password, fullName) {
     {
       email,
       full_name: fullName,
-      user_uuid: user.id, // Link to the auth.users table
+      user_uuid: user.user.id, // Link to the auth.users table
     },
   ]);
 
   if (insertError) {
-    console.error("Insert error:", insertError);
     return { error: insertError };
   }
 
-  return { user };
+  const { user: logInUser, error: logInError } = await logIn(email, password);
+
+  if (logInError) {
+    return { user: null, error: logInError };
+  }
+
+  return { user: logInUser, error: null };
 }
 
 // // Example usage
@@ -53,13 +58,13 @@ export async function createAccount(email, password, fullName) {
 // Login function
 export async function logIn(email, password) {
   // Log in the user with email and password
-  const { user, error: loginError } = await supabase.auth.signIn({
-    email,
-    password,
-  });
+  const { data: user, error: loginError } =
+    await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
 
   if (loginError) {
-    console.error("Login error:", loginError);
     return { error: loginError };
   }
 
@@ -67,7 +72,7 @@ export async function logIn(email, password) {
   const { data: userProfile, error: profileError } = await supabase
     .from("users")
     .select("*")
-    .eq("user_uuid", user.id)
+    .eq("user_uuid", user.user.id)
     .single(); // Fetch the user's profile
 
   if (profileError) {

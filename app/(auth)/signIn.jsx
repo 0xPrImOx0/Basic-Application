@@ -8,39 +8,57 @@ import { useForm, Controller } from "react-hook-form";
 import { signInSchema } from "../../utils/validate";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useAuth } from "../../services/auth-provider";
+import { logIn } from "../../services/auth";
+import Toast from "react-native-toast-message";
 
 const signIn = () => {
-  const { session } = useAuth();
-  if (session) return <Redirect href="" />;
-
   const {
     control,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isSubmitting },
   } = useForm({
     resolver: yupResolver(signInSchema),
     mode: "onTouched",
     reValidateMode: "onChange",
     defaultValues: {
-      fullName: "",
       email: "",
       password: "",
-      confirmPassword: "",
     },
   });
+  const [isLoading, setIsLoading] = useState(false);
+  const [loadingText, setLoadingText] = useState("Login");
 
   const onSubmit = async (data) => {
     setIsLoading(true);
-    await new Promise((resolve) => setTimeout(resolve, 10000)); // Simulate 10s API request
-    console.log(data);
 
-    setLoadingText("Login");
-    router.push("/home");
-    setIsLoading(false);
+    try {
+      console.log("Point reached");
+
+      const { error } = await logIn(data.email, data.password);
+
+      if (error) {
+        return Toast.show({
+          type: "error",
+          text1: error.message || "An error occurred",
+        });
+      } else {
+        Toast.show({
+          type: "success",
+          text1: "Logged in Successfully!",
+        });
+
+        router.replace("/home");
+      }
+    } catch (error) {
+      Toast.show({
+        type: "error",
+        text1: error.message || "An unexpected error occurred",
+      });
+    } finally {
+      console.log(data);
+      setIsLoading(false);
+    }
   };
-
-  const [loadingText, setLoadingText] = useState("Login");
-  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     let dotIndex = 1;
@@ -50,16 +68,10 @@ const signIn = () => {
       interval = setInterval(() => {
         setLoadingText(`Logging in${".".repeat(dotIndex)}`);
         dotIndex = dotIndex === 3 ? 1 : dotIndex + 1;
-      }, 300); // Change dots every 3ms
-
-      setTimeout(() => {
-        clearInterval(interval); // Stop changing dots after 10 seconds
-        setIsLoading(false);
-        setLoadingText("Create Account");
-      }, 10000); // 10 seconds duration
+      }, 300); // Change dots every 300ms
     }
 
-    // Cleanup interval when not loading
+    // Cleanup when isLoading becomes false
     return () => clearInterval(interval);
   }, [isLoading]);
 
@@ -131,9 +143,9 @@ const signIn = () => {
         <CustomButton
           label={loadingText}
           styles="w-full bg-[#161515] h-12 text-base mb-6"
-          textStyle={`font-medium text-[#fff] ${isLoading && "text-xl"}`}
+          textStyle={`font-medium text-[#fff] ${isSubmitting && "text-xl"}`}
           onPress={handleSubmit(onSubmit)}
-          disabled={isLoading}
+          disabled={isSubmitting}
         />
         <Text className={"font-light text-base text-[#6C6C6C] text-justify"}>
           By continuing, you agree to our Terms of Service and Privacy Policy.

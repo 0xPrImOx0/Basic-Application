@@ -24,7 +24,7 @@ export default function AuthProvider({ children }) {
         const { data: user, error } = await supabase
           .from("users")
           .select("*")
-          .eq("id", session.user.id)
+          .eq("user_uuid", session.user.id)
           .single();
 
         if (error) {

@@ -6,6 +6,8 @@ import PersonalDetails from "../../../components/PersonalDetails";
 import Icons from "../../../constants/Icons";
 import CustomButton from "../../../components/CustomButton";
 import { router } from "expo-router";
+import { logOut } from "../../../services/auth";
+import Toast from "react-native-toast-message";
 
 const manageAccount = () => {
   const { width } = Dimensions.get("window");
@@ -13,6 +15,33 @@ const manageAccount = () => {
 
   const profilePic = "https://via.placeholder.com/150";
   const coverPhoto = "https://via.placeholder.com/800x300";
+
+  const handleLogOut = async () => {
+    try {
+      console.log("Point reached");
+
+      const { error } = await logOut();
+
+      if (error) {
+        return Toast.show({
+          type: "error",
+          text1: error.message || "An error occurred",
+        });
+      }
+
+      Toast.show({
+        type: "success",
+        text1: "Signed Out Successfully!",
+      });
+
+      router.replace("/signIn");
+    } catch (error) {
+      Toast.show({
+        type: "error",
+        text1: error.message || "An unexpected error occurred",
+      });
+    }
+  };
 
   return (
     <Container
@@ -84,7 +113,7 @@ const manageAccount = () => {
               iconTint={"#FFFFFF"}
               textStyle={"font-medium text-base text-[#FFFFFF]"}
               iconStyle={"w-6 h-6 mr-3"}
-              onPress={()  => router.push("/settings/editProfile")}
+              onPress={() => router.push("/settings/editProfile")}
             />
 
             <CustomButton
@@ -104,7 +133,7 @@ const manageAccount = () => {
               iconTint={"#FFFFFF"}
               textStyle={"font-medium text-base text-[#FFFFFF]"}
               iconStyle={"w-6 h-6 mr-3"}
-              onPress={() => router.replace("/signIn")}
+              onPress={handleLogOut}
             />
           </View>
         </View>

@@ -171,6 +171,7 @@ const addSubject = () => {
           }
           letterCase={"characters"}
           styles="mt-1 w-full bg-white mb-4"
+          verify={false}
         />
 
         <FormField
@@ -182,6 +183,7 @@ const addSubject = () => {
             setFormData((prev) => ({ ...prev, courseName: text }))
           }
           styles="mt-1 w-full bg-white mb-4"
+          verify={false}
         />
 
         {/* Course Type Picker */}
@@ -209,6 +211,7 @@ const addSubject = () => {
             setFormData((prev) => ({ ...prev, section: text }))
           }
           styles="mt-1 w-full bg-white"
+          verify={false}
         />
       </View>
 
@@ -244,6 +247,7 @@ const addSubject = () => {
               placeholder="HH:MM"
               styles="mt-1 w-full bg-white"
               ref={f2fTextInputRef} // Reference for the TextInput
+              verify={false}
             />
           </View>
         </View>
@@ -257,6 +261,7 @@ const addSubject = () => {
           }
           placeholder="Enter room number"
           styles="mt-1 w-full bg-white"
+          verify={false}
         />
       </View>
 
@@ -292,6 +297,7 @@ const addSubject = () => {
               placeholder="HH:MM"
               styles="mt-1 w-full bg-white"
               ref={onlineTextInputRef} // Reference for the TextInput
+              verify={false}
             />
           </View>
         </View>
@@ -308,6 +314,7 @@ const addSubject = () => {
           }
           placeholder="Enter instructor name"
           styles="mt-1 w-full bg-white"
+          verify={false}
         />
       </View>
 

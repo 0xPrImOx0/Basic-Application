@@ -6,20 +6,21 @@ import CustomButton from "./CustomButton";
 const FormField = forwardRef(
   (
     {
-      containerStyles,
-      formHeaderStyle,
-      formHeader,
+      containerStyles, //style of the Main container
+      formHeaderStyle, //style of the Form header/title Container
+      formHeader, //style of the Form header/title
       value,
       placeholder,
-      handleChangeText,
-      styles,
-      error,
-      letterCase = "none",
+      handleChangeText, //onChangeText
+      styles, //styles of the Input Container
+      error, //check if there's an error
+      letterCase = "none", //word setup
       onBlur,
       onFocus,
-      keyboardType,
-      type,
-      inputMode,
+      keyboardType, //change keyboard format
+      type, //adds the password features if === password
+      editable, //sets if editable
+      verify = true,
     },
     ref
   ) => {
@@ -34,7 +35,7 @@ const FormField = forwardRef(
           >
             {formHeader}
           </Text>
-          {(value || error) && (
+          {(value || error) && verify && (
             <Image
               source={error ? Icons.x : Icons.check}
               className={"h-4 w-4 self-center"}
@@ -68,7 +69,7 @@ const FormField = forwardRef(
             onBlur={onBlur}
             onFocus={onFocus}
             ref={ref}
-            inputMode={inputMode}
+            editable={editable}
           />
 
           {type === "password" ? (
