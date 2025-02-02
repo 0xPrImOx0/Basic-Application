@@ -14,15 +14,16 @@ import DropDown from "../../../components/DropDown";
 import FormField from "../../../components/FormField";
 import Container from "../../../components/Container";
 import CustomButton from "../../../components/CustomButton";
+import CustomRadioButton from "../../../components/CustomRadioButton";
 
 const days = [
-  "Monday",
-  "Tuesday",
-  "Wednesday",
-  "Thursday",
-  "Friday",
-  "Saturday",
-  "Sunday",
+  { id: "Sat", letter: "S", full: "Saturday" },
+  { id: "Mon", letter: "M", full: "Monday" },
+  { id: "Tue", letter: "T", full: "Tuesday" },
+  { id: "Wed", letter: "W", full: "Wednesday" },
+  { id: "Thu", letter: "Th", full: "Thursday" },
+  { id: "Fri", letter: "F", full: "Friday" },
+  { id: "Sun", letter: "S", full: "Sunday" },
 ];
 
 const addSubject = () => {
@@ -32,10 +33,10 @@ const addSubject = () => {
     courseName: "",
     courseType: "major",
     section: "",
-    f2fScheduleDay: "Monday",
+    f2fScheduleDay: "Mon",
     f2fScheduleTime: new Date(),
     room: "",
-    onlineScheduleDay: "Monday",
+    onlineScheduleDay: "Mon",
     onlineScheduleTime: new Date(),
     instructor: "",
   });
@@ -223,27 +224,28 @@ const addSubject = () => {
         <View className="flex-row justify-between mb-3">
           <View className="flex-1 mr-2">
             <Text className="text-lg font-medium text-[#0A0A0A] mb-1">Day</Text>
-            <View className="border border-gray-300 rounded-md bg-white">
-              <DropDown
-                selectedValue={formData.f2fScheduleDay}
-                onValueChange={(itemValue) =>
-                  setFormData((prev) => ({
-                    ...prev,
-                    f2fScheduleDay: itemValue,
-                  }))
-                }
-                dataList={days}
-              />
+            <View className={"flex-row flex-1 justify-between items-center"}>
+              {days.map((day) => (
+                <CustomRadioButton
+                  key={day.full}
+                  letter={day.letter}
+                  selected={formData.f2fScheduleDay === day.id}
+                  onPress={() =>
+                    setFormData((prev) => ({ ...prev, f2fScheduleDay: day.id }))
+                  }
+                />
+              ))}
             </View>
           </View>
-          <View className="flex-1">
+          <View className="w-[35%]">
             <FormField
               formHeader="Time"
               formHeaderStyle={"text-lg font-medium text-[#0A0A0A]"}
               value={formatTime(formData.f2fScheduleTime)} // Format Date object
-              onFocus={() =>
-                setShowDatePickers((prev) => ({ ...prev, f2fTime: true }))
-              }
+              onFocus={(e) => {
+                e.target.blur();
+                setShowDatePickers((prev) => ({ ...prev, f2fTime: true }));
+              }}
               placeholder="HH:MM"
               styles="mt-1 w-full bg-white"
               ref={f2fTextInputRef} // Reference for the TextInput
@@ -273,27 +275,31 @@ const addSubject = () => {
         <View className="flex-row justify-between mb-3">
           <View className="flex-1 mr-2">
             <Text className="text-lg font-medium text-[#0A0A0A] mb-1">Day</Text>
-            <View className="border border-gray-300 rounded-md bg-white">
-              <DropDown
-                selectedValue={formData.onlineScheduleDay}
-                onValueChange={(itemValue) =>
-                  setFormData((prev) => ({
-                    ...prev,
-                    onlineScheduleDay: itemValue,
-                  }))
-                }
-                dataList={days}
-              />
+            <View className={"flex-row flex-1 justify-between items-center"}>
+              {days.map((day) => (
+                <CustomRadioButton
+                  key={day.full}
+                  letter={day.letter}
+                  selected={formData.onlineScheduleDay === day.id}
+                  onPress={() =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      onlineScheduleDay: day.id,
+                    }))
+                  }
+                />
+              ))}
             </View>
           </View>
-          <View className="flex-1">
+          <View className="w-[35%]">
             <FormField
               formHeader="Time"
               formHeaderStyle={"text-lg font-medium text-[#0A0A0A]"}
               value={formatTime(formData.onlineScheduleTime)} // Format Date object
-              onFocus={() =>
-                setShowDatePickers((prev) => ({ ...prev, onlineTime: true }))
-              }
+              onFocus={(e) => {
+                e.target.blur();
+                setShowDatePickers((prev) => ({ ...prev, onlineTime: true }));
+              }}
               placeholder="HH:MM"
               styles="mt-1 w-full bg-white"
               ref={onlineTextInputRef} // Reference for the TextInput
