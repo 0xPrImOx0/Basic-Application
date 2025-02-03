@@ -92,16 +92,17 @@ const manageAccount = () => {
             </Text>
 
             <View className="flex-1 gap-3">
-              <PersonalDetails icon={Icons.email} label="reydaug34@gmail.com" />
-              <PersonalDetails icon={Icons.telephone} label="09123456789" />
-              <PersonalDetails
-                icon={Icons.location}
-                label="Cagayan de Oro City"
-              />
               <PersonalDetails
                 icon={Icons.gradCap}
                 label="University of Science and Technology of Southern Philippines"
               />
+              <PersonalDetails
+                icon={Icons.location}
+                label="Cagayan de Oro City"
+              />
+              <PersonalDetails icon={Icons.dob} label="October 3, 2004" />
+              <PersonalDetails icon={Icons.email} label="reydaug34@gmail.com" />
+              <PersonalDetails icon={Icons.telephone} label="09123456789" />
             </View>
           </View>
 

@@ -19,6 +19,7 @@ import gradCap from "../assets/images/gradCap.png";
 import edit from "../assets/images/edit.png";
 import key from "../assets/images/key.png";
 import logout from "../assets/images/logout.png";
+import dob from "../assets/images/dob.png";
 
 export default {
   logo,
@@ -42,4 +43,5 @@ export default {
   edit,
   key,
   logout,
+  dob,
 };
