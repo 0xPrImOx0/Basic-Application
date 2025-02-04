@@ -12,6 +12,9 @@ import * as ImagePicker from "expo-image-picker";
 import Container from "../../../components/Container";
 import CustomButton from "../../../components/CustomButton";
 import FormField from "../../../components/FormField";
+import { useForm, Controller } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import validateProfile from "../../../utils/validateProfile";
 
 const { width } = Dimensions.get("window");
 const COVER_HEIGHT = width * 0.5625; // 16:9 aspect ratio
@@ -20,10 +23,25 @@ const editProfile = () => {
   const [profileData, setProfileData] = useState({
     profilePic: "https://via.placeholder.com/150",
     coverPhoto: "https://via.placeholder.com/800x300",
-    email: "user@example.com",
-    contact: "+1 234 567 8900",
-    location: "New York, USA",
-    school: "University of Technology",
+  });
+
+  const {
+    control,
+    handleSubmit,
+    formState: { errors, isSubmitting, isDirty },
+    trigger,
+    watch,
+  } = useForm({
+    resolver: yupResolver(validateProfile),
+    mode: "onTouched",
+    reValidateMode: "onChange",
+    defaultValues: {
+      school: "",
+      location: "",
+      dob: "",
+      email: "",
+      contact: "",
+    },
   });
 
   useEffect(() => {
@@ -59,10 +77,10 @@ const editProfile = () => {
     }
   };
 
-  const handleSave = () => {
+  const onSubmit = (data) => {
     // Handle save logic here
     console.log("Save button clicked");
-    console.log("Profile data saved:", profileData);
+    console.log("Profile data saved:", data, profileData);
   };
 
   return (
@@ -113,58 +131,94 @@ const editProfile = () => {
           </View>
 
           {/* Form Fields */}
-          <View className="my-3">
-            {/* Email Field */}
+          <View>
+            {/* School Field */}
             <View>
-              <FormField
-                formHeader="Email Address"
-                value={profileData.email}
-                handleChangeText={(text) =>
-                  setProfileData((prev) => ({ ...prev, email: text }))
-                }
-                styles="mt-1 mb-4 w-full"
-                keyboardType="email-address"
-                placeholder="Enter your email"
-              />
-            </View>
-
-            {/* Contact Field */}
-            <View>
-              <FormField
-                formHeader="Contact Number"
-                value={profileData.contact}
-                handleChangeText={(text) =>
-                  setProfileData((prev) => ({ ...prev, contact: text }))
-                }
-                styles="mt-1 mb-4 w-full"
-                keyboardType="phone-pad"
-                placeholder="Enter your contact number"
+              <Controller
+                name="school"
+                control={control}
+                render={({ field: { onChange, onBlur, value } }) => (
+                  <FormField
+                    formHeader={"School/University"}
+                    placeholder="Enter your school/university"
+                    containerStyles={"mb-4"}
+                    styles="mt-1"
+                    error={errors.school?.message}
+                    value={value}
+                    onBlur={onBlur}
+                    handleChangeText={onChange}
+                    editable={!isSubmitting}
+                    verify={false}
+                  />
+                )}
               />
             </View>
 
             {/* Location Field */}
             <View>
-              <FormField
-                formHeader="Location"
-                value={profileData.location}
-                handleChangeText={(text) =>
-                  setProfileData((prev) => ({ ...prev, location: text }))
-                }
-                styles="mt-1 mb-4 w-full"
-                placeholder="Enter your location"
+              <Controller
+                name="location"
+                control={control}
+                render={({ field: { onChange, onBlur, value } }) => (
+                  <FormField
+                    formHeader="Location"
+                    placeholder="Enter your location"
+                    containerStyles={"mb-4"}
+                    styles="mt-1"
+                    error={errors.location?.message}
+                    value={value}
+                    onBlur={onBlur}
+                    handleChangeText={onChange}
+                    editable={!isSubmitting}
+                    verify={false}
+                  />
+                )}
               />
             </View>
 
-            {/* School Field */}
+            {/* Email Field */}
             <View>
-              <FormField
-                formHeader="School/University"
-                value={profileData.school}
-                handleChangeText={(text) =>
-                  setProfileData((prev) => ({ ...prev, school: text }))
-                }
-                styles="mt-1 w-full mb-10"
-                placeholder="Enter your school/university"
+              <Controller
+                name="email"
+                control={control}
+                render={({ field: { onChange, onBlur, value } }) => (
+                  <FormField
+                    formHeader={"Email Address"}
+                    placeholder={"Enter your Email"}
+                    containerStyles={"mb-4"}
+                    styles="mt-1"
+                    keyboardType="email-address"
+                    error={errors.email?.message}
+                    value={value}
+                    onBlur={onBlur}
+                    handleChangeText={onChange}
+                    editable={!isSubmitting}
+                    verify={false}
+                  />
+                )}
+              />
+            </View>
+
+            {/* Contact Field */}
+            <View className="mb-8">
+              <Controller
+                name="contact"
+                control={control}
+                render={({ field: { onChange, onBlur, value } }) => (
+                  <FormField
+                    formHeader="Contact Number"
+                    placeholder="Enter your contact number"
+                    containerStyles={"mb-4"}
+                    styles="mt-1"
+                    keyboardType="phone-pad"
+                    error={errors.contact?.message}
+                    value={value}
+                    onBlur={onBlur}
+                    handleChangeText={onChange}
+                    editable={!isSubmitting}
+                    verify={false}
+                  />
+                )}
               />
             </View>
           </View>
@@ -174,7 +228,7 @@ const editProfile = () => {
             label="Save Changes"
             styles="w-full bg-[#161515] h-12 mb-2"
             textStyle="font-medium text-lg text-[#fff] p-2"
-            onPress={handleSave}
+            onPress={handleSubmit(onSubmit)}
           />
         </View>
       </View>
