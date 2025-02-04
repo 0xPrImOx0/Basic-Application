@@ -12,24 +12,40 @@ import * as ImagePicker from "expo-image-picker";
 import Container from "../../../components/Container";
 import CustomButton from "../../../components/CustomButton";
 import FormField from "../../../components/FormField";
+import { useForm, Controller } from "react-hook-form";
+import { validatePassword } from "../../../utils/validateProfile";
+import { yupResolver } from "@hookform/resolvers/yup";
 
 const { width } = Dimensions.get("window");
 const COVER_HEIGHT = width * 0.5625; // 16:9 aspect ratio
 
 const changePassword = () => {
-  const [password, setPassword] = useState({
-    currentPassword: "",
-    newPassword: "",
-    confirmNewPassword: "",
+  const {
+    control,
+    handleSubmit,
+    formState: { errors, isSubmitting, isDirty },
+    trigger,
+    watch,
+  } = useForm({
+    resolver: yupResolver(validatePassword),
+    mode: "onTouched",
+    reValidateMode: "onChange",
+    defaultValues: {
+      currentPassword: "",
+      newPassword: "",
+      confirmNewPassword: "",
+    },
   });
+
+  const confirmNewPassword = watch("confirmNewPassword");
 
   const profilePic = "https://via.placeholder.com/150";
   const coverPhoto = "https://via.placeholder.com/800x300";
 
-  const handleSave = () => {
+  const onSubmit = (data) => {
     // Handle save logic here
     console.log("Save button clicked");
-    console.log("Profile data saved:", password);
+    console.log("Password Changes Saved:", data);
   };
 
   return (
@@ -67,45 +83,77 @@ const changePassword = () => {
 
           {/* Form Fields */}
           <View className="mt-4 mb-2">
-            {/* Email Field */}
+            {/* Current Password Field */}
             <View>
-              <FormField
-                formHeader="Current Password"
-                value={password.currentPassword}
-                handleChangeText={(text) =>
-                  setPassword((prev) => ({ ...prev, currentPassword: text }))
-                }
-                styles="mt-1 mb-4 w-full"
-                placeholder="Enter your current password"
-                type={"password"}
+              <Controller
+                name="currentPassword"
+                control={control}
+                render={({ field: { onChange, onBlur, value } }) => (
+                  <FormField
+                    formHeader="Current Password"
+                    placeholder="Enter your current password"
+                    type="password"
+                    containerStyles={"mb-4"}
+                    styles="mt-1"
+                    error={errors.currentPassword?.message}
+                    value={value}
+                    onBlur={onBlur}
+                    handleChangeText={onChange}
+                    editable={!isSubmitting}
+                    verify={false}
+                  />
+                )}
               />
             </View>
 
-            {/* Contact Field */}
+            {/* New Password Field */}
             <View>
-              <FormField
-                formHeader="New Password"
-                value={password.newPassword}
-                handleChangeText={(text) =>
-                  setPassword((prev) => ({ ...prev, newPassword: text }))
-                }
-                styles="mt-1 mb-4 w-full"
-                placeholder="Enter your new password"
-                type={"password"}
+              <Controller
+                name="newPassword"
+                control={control}
+                render={({ field: { onChange, onBlur, value } }) => (
+                  <FormField
+                    formHeader="New Password"
+                    placeholder="Enter your new password"
+                    type="password"
+                    containerStyles={"mb-4"}
+                    styles="mt-1"
+                    error={errors.newPassword?.message}
+                    value={value}
+                    onBlur={onBlur}
+                    handleChangeText={(text) => {
+                      onChange(text);
+                      {
+                        confirmNewPassword && trigger("confirmNewPassword");
+                      }
+                    }}
+                    editable={!isSubmitting}
+                    verify={false}
+                  />
+                )}
               />
             </View>
 
-            {/* Location Field */}
-            <View>
-              <FormField
-                formHeader="Confirm New Password"
-                value={password.confirmNewPassword}
-                handleChangeText={(text) =>
-                  setPassword((prev) => ({ ...prev, confirmNewPassword: text }))
-                }
-                styles="mt-1 w-full mb-10"
-                placeholder="Confirm your new password"
-                type={"password"}
+            {/* Confirm New Password Field */}
+            <View className={"mb-8"}>
+              <Controller
+                name="confirmNewPassword"
+                control={control}
+                render={({ field: { onChange, onBlur, value } }) => (
+                  <FormField
+                    formHeader="Confirm New Password"
+                    placeholder="Confirm your new password"
+                    type="password"
+                    containerStyles={"mb-4"}
+                    styles="mt-1"
+                    error={errors.confirmNewPassword?.message}
+                    value={value}
+                    onBlur={onBlur}
+                    handleChangeText={onChange}
+                    editable={!isSubmitting}
+                    verify={false}
+                  />
+                )}
               />
             </View>
           </View>
@@ -115,7 +163,7 @@ const changePassword = () => {
             label="Save New Password"
             styles="w-full bg-[#161515] h-12 mb-2"
             textStyle="font-medium text-lg text-[#fff] p-2"
-            onPress={handleSave}
+            onPress={handleSubmit(onSubmit)}
           />
         </View>
       </View>

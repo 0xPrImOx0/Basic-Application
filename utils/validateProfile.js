@@ -1,6 +1,6 @@
 import * as yup from "yup";
 
-const validateProfile = yup.object({
+export const validateCredentials = yup.object({
   school: yup.string().required("This field is required."),
   location: yup.string().required("This field is required."),
   //   dob: yup.required("This field is required."),
@@ -17,4 +17,24 @@ const validateProfile = yup.object({
     ),
 });
 
-export default validateProfile;
+export const validatePassword = yup.object({
+  currentPassword: yup
+    .string()
+    .required("This field is required.")
+    .min(8, "Password must contain at least 8 characters.")
+    .max(128, "Password must contain at most 128 characters."),
+
+  newPassword: yup
+    .string()
+    .required("This field is required.")
+    .min(8, "Password must contain at least 8 characters.")
+    .max(128, "Password must contain at most 128 characters."),
+
+  confirmNewPassword: yup
+    .string()
+    .required("This field is required.")
+    .oneOf(
+      [yup.ref("newPassword")],
+      "Make sure it matched New Password before continuing."
+    ),
+});

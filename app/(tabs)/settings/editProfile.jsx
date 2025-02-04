@@ -14,7 +14,7 @@ import CustomButton from "../../../components/CustomButton";
 import FormField from "../../../components/FormField";
 import { useForm, Controller } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import validateProfile from "../../../utils/validateProfile";
+import { validateCredentials } from "../../../utils/validateProfile";
 
 const { width } = Dimensions.get("window");
 const COVER_HEIGHT = width * 0.5625; // 16:9 aspect ratio
@@ -32,7 +32,7 @@ const editProfile = () => {
     trigger,
     watch,
   } = useForm({
-    resolver: yupResolver(validateProfile),
+    resolver: yupResolver(validateCredentials),
     mode: "onTouched",
     reValidateMode: "onChange",
     defaultValues: {
