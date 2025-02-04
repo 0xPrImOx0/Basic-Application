@@ -18,6 +18,7 @@ const Container = ({
   direction,
   wraps,
   justify,
+  keyboardShouldPersistTaps = "handled",
 }) => {
   return (
     <SafeAreaView className={`bg-[${bg}] h-full flex-1 ${savStyles}`}>
@@ -28,7 +29,7 @@ const Container = ({
       >
         {scroll ? (
           <ScrollView
-            keyboardShouldPersistTaps="handled"
+            keyboardShouldPersistTaps={keyboardShouldPersistTaps}
             contentContainerStyle={{
               minHeight: "100%",
               paddingHorizontal: ph,

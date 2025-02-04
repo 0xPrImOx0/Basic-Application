@@ -15,17 +15,23 @@ import FormField from "../../../components/FormField";
 import { useForm, Controller } from "react-hook-form";
 import { validatePassword } from "../../../utils/validateProfile";
 import { yupResolver } from "@hookform/resolvers/yup";
+import useChangePassword from "../../../services/useChangePassword";
+import { useAuth } from "../../../services/auth-provider";
+import Toast from "react-native-toast-message";
 
 const { width } = Dimensions.get("window");
 const COVER_HEIGHT = width * 0.5625; // 16:9 aspect ratio
 
 const changePassword = () => {
+  const { session } = useAuth();
+
   const {
     control,
     handleSubmit,
-    formState: { errors, isSubmitting, isDirty },
+    formState: { errors, isSubmitting },
     trigger,
     watch,
+    reset,
   } = useForm({
     resolver: yupResolver(validatePassword),
     mode: "onTouched",
@@ -36,20 +42,80 @@ const changePassword = () => {
       confirmNewPassword: "",
     },
   });
+  const { changePasswordData, isLoading, errorMessage } = useChangePassword();
+  const [errorComponent, setErrorComponent] = useState("");
+
+  const [loadingText, setLoadingText] = useState("Save New Password");
 
   const confirmNewPassword = watch("confirmNewPassword");
 
   const profilePic = "https://via.placeholder.com/150";
   const coverPhoto = "https://via.placeholder.com/800x300";
 
-  const onSubmit = (data) => {
-    // Handle save logic here
-    console.log("Save button clicked");
-    console.log("Password Changes Saved:", data);
+  const onSubmit = async (data) => {
+    try {
+      // console.log("Full session object:", JSON.stringify(session, null, 2));
+      // console.log("Session type:", typeof session);
+      // console.log("Session keys:", Object.keys(session || {}));
+      // console.log("Session user:", session?.user);
+      // console.log("User Data:", data);
+
+      if (!session) {
+        Toast.show({
+          type: "error",
+          text1: "No active session found",
+        });
+        return;
+      }
+
+      const result = await changePasswordData({
+        session,
+        currentPassword: data.currentPassword,
+        newPassword: data.confirmNewPassword,
+      });
+
+      {
+        result.errorComponent && setErrorComponent("Password Incorrect!");
+      }
+
+      if (result.success) {
+        Toast.show({
+          type: "success",
+          text1: "Password Changed Successfully!",
+        });
+        reset();
+      } else {
+        return Toast.show({
+          type: "error",
+          text1: result.error || "Failed to change password",
+        });
+      }
+    } catch (err) {
+      Toast.show({
+        type: "error",
+        text1: err.message || "An error occurred", // Use err.message instead of err directly
+      });
+    }
   };
 
+  useEffect(() => {
+    let dotIndex = 1;
+    let interval;
+
+    if (isLoading) {
+      interval = setInterval(() => {
+        setLoadingText(`Saving New Password${".".repeat(dotIndex)}`);
+        dotIndex = dotIndex === 3 ? 1 : dotIndex + 1;
+      }, 300); // Change dots every 300ms
+    }
+
+    // Cleanup when isLoading becomes false
+    setLoadingText("Save New Password");
+    return () => clearInterval(interval);
+  }, [isLoading]);
+
   return (
-    <Container bg={"#F9FAFB"}>
+    <Container bg={"#F9FAFB"} keyboardShouldPersistTaps="always">
       {/* Cover Photo Section */}
       <View className="relative">
         <Image
@@ -95,7 +161,8 @@ const changePassword = () => {
                     type="password"
                     containerStyles={"mb-4"}
                     styles="mt-1"
-                    error={errors.currentPassword?.message}
+                    error={errorComponent || errors.currentPassword?.message}
+                    onFocus={() => setErrorComponent("")}
                     value={value}
                     onBlur={onBlur}
                     handleChangeText={onChange}
@@ -160,10 +227,11 @@ const changePassword = () => {
 
           {/* Save Button */}
           <CustomButton
-            label="Save New Password"
-            styles="w-full bg-[#161515] h-12 mb-2"
+            label={loadingText}
+            styles={`w-full bg-[#161515] h-12 mb-2 ${isLoading && "text-xl"}`}
             textStyle="font-medium text-lg text-[#fff] p-2"
             onPress={handleSubmit(onSubmit)}
+            disabled={isLoading}
           />
         </View>
       </View>

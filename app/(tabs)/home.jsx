@@ -1,5 +1,5 @@
 import { View, Text, Image } from "react-native";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import ShowMoreBox from "../../components/ShowMoreBox";
 import Images from "../../constants/Images";
 import Icons from "../../constants/Icons";
@@ -9,8 +9,17 @@ import Container from "../../components/Container";
 import CourseCard from "../../components/CourseCard";
 import CustomButton from "../../components/CustomButton";
 import { router } from "expo-router";
+import { useAuth } from "../../services/auth-provider";
 
 const home = () => {
+  const { session } = useAuth();
+
+  useEffect(() => {
+    if (!session) {
+      router.replace("/index");
+    }
+  }, [session]);
+
   const oddCourses = Object.keys(courses)
     .filter((key) => parseInt(key) % 2 !== 0) // Keep only odd keys
     .map((key) => ({ id: key, ...courses[key] })); // Convert to array for FlatList
@@ -78,13 +87,17 @@ const home = () => {
       <Container>
         <View className={"mt-8 mb-10 px-5 w-full"}>
           <View className={"flex-row items-center"}>
-            <Image
-              source={Images.daugCrop}
-              className={"w-14 h-14 rounded-full mr-3"}
-            />
-            <Text className={"font-extrabold text-2xl text-[#0A0A0A]"}>
-              Welcome, Rey!
-            </Text>
+            <CustomButton
+              onPress={() => router.push("/settings/manageAccount")}
+            >
+              <Image
+                source={Images.daugCrop}
+                className={"w-14 h-14 rounded-full mr-3"}
+              />
+              <Text className={"font-extrabold text-2xl text-[#0A0A0A]"}>
+                Welcome, Rey!
+              </Text>
+            </CustomButton>
           </View>
         </View>
 
@@ -201,15 +214,14 @@ const home = () => {
 
             <View className="flex-row justify-between mx-3">
               <CustomButton
-                label={"Add Subject"}
-                styles={"bg-[#5CB88F] flex-1 mr-2 p-2"}
-                onPress={() => router.push("/settings/addSubject")}
-              />
-
-              <CustomButton
                 label={"Delete Subject"}
-                styles={"bg-[#FF0004] flex-1 p-2"}
+                styles={"bg-[#FF0004] flex-1 p-2 mr-2"}
                 onPress={() => router.push("/settings/delSubject")}
+              />
+              <CustomButton
+                label={"Add Subject"}
+                styles={"bg-[#5CB88F] flex-1 p-2"}
+                onPress={() => router.push("/settings/addSubject")}
               />
             </View>
           </ShowMoreBox>

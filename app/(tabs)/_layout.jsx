@@ -107,6 +107,7 @@ const TabsLayout = () => {
             />
           ),
         }}
+        initialParams={{ screen: "index" }} // Explicitly setting the default route for the tab
       />
     </Tabs>
   );

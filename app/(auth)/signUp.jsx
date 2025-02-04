@@ -75,12 +75,13 @@ const signUp = () => {
 
     if (isLoading) {
       interval = setInterval(() => {
-        setLoadingText(`Creating Account${".".repeat(dotIndex)}`);
+        setLoadingText(`Creating account${".".repeat(dotIndex)}`);
         dotIndex = dotIndex === 3 ? 1 : dotIndex + 1;
       }, 300); // Change dots every 300ms
     }
 
     // Cleanup when isLoading becomes false
+    setLoadingText("Create account");
     return () => clearInterval(interval);
   }, [isLoading]);
 

@@ -72,6 +72,7 @@ const signIn = () => {
     }
 
     // Cleanup when isLoading becomes false
+    setLoadingText("Login");
     return () => clearInterval(interval);
   }, [isLoading]);
 
