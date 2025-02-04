@@ -14,7 +14,9 @@ const signUp = () => {
   const {
     control,
     handleSubmit,
-    formState: { errors, isSubmitting },
+    formState: { errors, isSubmitting, isDirty },
+    trigger,
+    watch,
   } = useForm({
     resolver: yupResolver(signUpSchema),
     mode: "onTouched",
@@ -28,6 +30,8 @@ const signUp = () => {
   });
   const [loadingText, setLoadingText] = useState("Create account");
   const [isLoading, setIsLoading] = useState(false);
+
+  const confirmPassword = watch("confirmPassword");
 
   const onSubmit = async (data) => {
     setIsLoading(true);
@@ -161,7 +165,12 @@ const signUp = () => {
                 error={errors.password?.message}
                 value={value}
                 onBlur={onBlur}
-                handleChangeText={onChange}
+                handleChangeText={(text) => {
+                  onChange(text);
+                  {
+                    confirmPassword && trigger("confirmPassword");
+                  }
+                }}
                 editable={!isSubmitting}
               />
             )}
