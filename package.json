@@ -26,7 +26,7 @@
     "@supabase/supabase-js": "^2.48.1",
     "add": "^2.0.6",
     "aes-js": "^3.1.2",
-    "expo": "^52.0.28",
+    "expo": "^52.0.29",
     "expo-blur": "^14.0.3",
     "expo-constants": "~17.0.5",
     "expo-font": "~13.0.3",

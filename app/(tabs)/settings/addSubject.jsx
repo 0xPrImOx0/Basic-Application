@@ -15,37 +15,65 @@ import FormField from "../../../components/FormField";
 import Container from "../../../components/Container";
 import CustomButton from "../../../components/CustomButton";
 import CustomRadioButton from "../../../components/CustomRadioButton";
+import { useForm, Controller } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import validateSubject from "../../../utils/validateSubject";
 
 const days = [
-  { id: "Sat", letter: "S", full: "Saturday" },
+  { id: "Sun", letter: "S", full: "Sunday" },
   { id: "Mon", letter: "M", full: "Monday" },
   { id: "Tue", letter: "T", full: "Tuesday" },
   { id: "Wed", letter: "W", full: "Wednesday" },
   { id: "Thu", letter: "Th", full: "Thursday" },
   { id: "Fri", letter: "F", full: "Friday" },
-  { id: "Sun", letter: "S", full: "Sunday" },
+  { id: "Sat", letter: "S", full: "Saturday" },
 ];
+
+const formatTime = (date) => {
+  if (!(date instanceof Date)) {
+    date = new Date();
+  }
+  const hours = date.getHours().toString().padStart(2, "0");
+  const minutes = date.getMinutes().toString().padStart(2, "0");
+  return `${hours}:${minutes}`;
+};
 
 const addSubject = () => {
   const [formData, setFormData] = useState({
     icon: null,
-    courseCode: "",
-    courseName: "",
-    courseType: "major",
-    section: "",
-    f2fScheduleDay: "Mon",
-    f2fScheduleTime: new Date(),
-    room: "",
-    onlineScheduleDay: "Mon",
-    onlineScheduleTime: new Date(),
-    instructor: "",
   });
+
+  const {
+    control,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+    setValue,
+    watch,
+  } = useForm({
+    resolver: yupResolver(validateSubject),
+    mode: "onTouched",
+    reValidateMode: "onChange",
+    defaultValues: {
+      icon: null,
+      courseCode: "",
+      courseName: "",
+      courseType: "major",
+      section: "",
+      f2fScheduleDay: "Mon",
+      f2fScheduleTime: formatTime(new Date()), // Will store as string
+      room: "",
+      onlineScheduleDay: "Mon",
+      onlineScheduleTime: formatTime(new Date()), // Will store as string
+      instructor: "",
+    },
+  });
+
+  // Add these console logs to debug form state
+  // console.log("Form errors:", errors);
+  // console.log("Form is submitting:", isSubmitting);
 
   const f2fTextInputRef = useRef(null);
   const onlineTextInputRef = useRef(null);
-
-  const formatTime = (date) =>
-    date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
 
   const [showDatePickers, setShowDatePickers] = useState({
     f2fTime: false,
@@ -98,29 +126,41 @@ const addSubject = () => {
     }));
   };
 
-  const handleTimeChange = (key, event, selectedDate) => {
-    if (event.type === "set") {
-      // Blur the appropriate TextInput based on the key
-      if (key === "f2fScheduleTime") {
-        f2fTextInputRef.current?.blur();
-      } else if (key === "onlineScheduleTime") {
-        onlineTextInputRef.current?.blur();
-      }
-      if (selectedDate) {
-        setFormData((prev) => ({
+  const handleTimeChange = useCallback(
+    (key, event, selectedDate) => {
+      if (event.type === "set" && selectedDate) {
+        if (key === "f2fScheduleTime") {
+          f2fTextInputRef.current?.blur();
+        } else if (key === "onlineScheduleTime") {
+          onlineTextInputRef.current?.blur();
+        }
+
+        // Store only the time string
+        const timeString = formatTime(selectedDate);
+        setValue(key, timeString);
+
+        setShowDatePickers((prev) => ({
           ...prev,
-          [key]: selectedDate,
+          [key === "f2fScheduleTime" ? "f2fTime" : "onlineTime"]: false,
         }));
+      } else {
         setShowDatePickers((prev) => ({
           ...prev,
           [key === "f2fScheduleTime" ? "f2fTime" : "onlineTime"]: false,
         }));
       }
-    }
-  };
+    },
+    [setValue]
+  );
 
-  const handleSubmit = () => {
-    console.log(formData);
+  const onSubmit = async (data) => {
+    try {
+      // Add your submission logic here
+      console.log("Form submitted:", data);
+    } catch (error) {
+      console.error("Submit error:", error);
+      Alert.alert("Error", "Failed to submit form. Please try again.");
+    }
   };
 
   return (
@@ -162,29 +202,43 @@ const addSubject = () => {
 
       {/* Course Details */}
       <View className="mb-4 rounded-md bg-white p-3">
-        <FormField
-          formHeader="Course Code"
-          formHeaderStyle={"text-lg font-medium text-[#0A0A0A]"}
-          value={formData.courseCode}
-          placeholder="Enter course code"
-          handleChangeText={(text) =>
-            setFormData((prev) => ({ ...prev, courseCode: text }))
-          }
-          letterCase={"characters"}
-          styles="mt-1 w-full bg-white mb-4"
-          verify={false}
+        <Controller
+          name="courseCode"
+          control={control}
+          render={({ field: { onChange, onBlur, value } }) => (
+            <FormField
+              formHeader="Course Code"
+              formHeaderStyle={"text-lg font-medium text-[#0A0A0A]"}
+              containerStyles={"mb-6"}
+              styles="mt-1 w-full bg-white"
+              error={errors.courseCode?.message}
+              value={value}
+              placeholder="Enter course code"
+              handleChangeText={onChange}
+              letterCase={"characters"}
+              verify={false}
+              editable={!isSubmitting}
+            />
+          )}
         />
 
-        <FormField
-          formHeader="Course Name"
-          formHeaderStyle={"text-lg font-medium text-[#0A0A0A]"}
-          value={formData.courseName}
-          placeholder="Enter course name"
-          handleChangeText={(text) =>
-            setFormData((prev) => ({ ...prev, courseName: text }))
-          }
-          styles="mt-1 w-full bg-white mb-4"
-          verify={false}
+        <Controller
+          name="courseName"
+          control={control}
+          render={({ field: { onChange, onBlur, value } }) => (
+            <FormField
+              formHeader="Course Name"
+              formHeaderStyle={"text-lg font-medium text-[#0A0A0A]"}
+              containerStyles={"mb-6"}
+              styles="mt-1 w-full bg-white"
+              error={errors.courseName?.message}
+              value={value}
+              placeholder="Enter course name"
+              handleChangeText={onChange}
+              verify={false}
+              editable={!isSubmitting}
+            />
+          )}
         />
 
         {/* Course Type Picker */}
@@ -192,27 +246,38 @@ const addSubject = () => {
           Course Type
         </Text>
         <View className="border border-gray-300 rounded-md bg-white mb-4">
-          <DropDown
-            selectedValue={formData.courseType}
-            onValueChange={(itemValue) =>
-              setFormData((prev) => ({ ...prev, courseType: itemValue }))
-            }
-            noOfData={2}
-            label={["Major", "Minor"]}
-            value={["major", "minor"]}
+          <Controller
+            name="courseType"
+            control={control}
+            render={({ field: { onChange, value } }) => (
+              <DropDown
+                selectedValue={value}
+                onValueChange={onChange}
+                noOfData={2}
+                label={["Major", "Minor"]}
+                value={["major", "minor"]}
+              />
+            )}
           />
         </View>
 
-        <FormField
-          formHeader="Section"
-          formHeaderStyle={"text-lg font-medium text-[#0A0A0A]"}
-          value={formData.section}
-          placeholder="Enter section"
-          handleChangeText={(text) =>
-            setFormData((prev) => ({ ...prev, section: text }))
-          }
-          styles="mt-1 w-full bg-white"
-          verify={false}
+        <Controller
+          name="section"
+          control={control}
+          render={({ field: { onChange, onBlur, value } }) => (
+            <FormField
+              formHeader="Section"
+              formHeaderStyle={"text-lg font-medium text-[#0A0A0A]"}
+              containerStyles={"mb-1"}
+              styles="mt-1 w-full bg-white"
+              error={errors.section?.message}
+              value={value}
+              placeholder="Enter section"
+              handleChangeText={onChange}
+              verify={false}
+              editable={!isSubmitting}
+            />
+          )}
         />
       </View>
 
@@ -225,45 +290,64 @@ const addSubject = () => {
           <View className="flex-1 mr-2">
             <Text className="text-lg font-medium text-[#0A0A0A] mb-1">Day</Text>
             <View className={"flex-row flex-1 justify-between items-center"}>
-              {days.map((day) => (
-                <CustomRadioButton
-                  key={day.full}
-                  letter={day.letter}
-                  selected={formData.f2fScheduleDay === day.id}
-                  onPress={() =>
-                    setFormData((prev) => ({ ...prev, f2fScheduleDay: day.id }))
-                  }
-                />
-              ))}
+              <Controller
+                name="f2fScheduleDay"
+                control={control}
+                render={({ field: { onChange, onBlur, value } }) =>
+                  days.map((day) => (
+                    <CustomRadioButton
+                      key={day.full}
+                      letter={day.letter}
+                      selected={value === day.id}
+                      onPress={() => onChange(day.id)} // Ensure the value updates
+                    />
+                  ))
+                }
+              />
             </View>
           </View>
           <View className="w-[35%]">
-            <FormField
-              formHeader="Time"
-              formHeaderStyle={"text-lg font-medium text-[#0A0A0A]"}
-              value={formatTime(formData.f2fScheduleTime)} // Format Date object
-              onFocus={(e) => {
-                e.target.blur();
-                setShowDatePickers((prev) => ({ ...prev, f2fTime: true }));
-              }}
-              placeholder="HH:MM"
-              styles="mt-1 w-full bg-white"
-              ref={f2fTextInputRef} // Reference for the TextInput
-              verify={false}
+            <Controller
+              name="f2fScheduleTime"
+              control={control}
+              render={({ field: { onChange, onBlur, value } }) => (
+                <FormField
+                  formHeader="Time"
+                  formHeaderStyle={"text-lg font-medium text-[#0A0A0A]"}
+                  styles="mt-1 w-full bg-white"
+                  error={errors.f2fScheduleTime?.message}
+                  value={value}
+                  placeholder="HH:MM"
+                  handleChangeText={onChange}
+                  onFocus={(e) => {
+                    e.target.blur();
+                    setShowDatePickers((prev) => ({ ...prev, f2fTime: true }));
+                  }}
+                  ref={f2fTextInputRef} // Reference for the TextInput
+                  verify={false}
+                  editable={!isSubmitting}
+                />
+              )}
             />
           </View>
         </View>
 
-        <FormField
-          formHeader="Room"
-          formHeaderStyle={"text-lg font-medium text-[#0A0A0A]"}
-          value={formData.room}
-          handleChangeText={(text) =>
-            setFormData((prev) => ({ ...prev, room: text }))
-          }
-          placeholder="Enter room number"
-          styles="mt-1 w-full bg-white"
-          verify={false}
+        <Controller
+          name="room"
+          control={control}
+          render={({ field: { onChange, onBlur, value } }) => (
+            <FormField
+              formHeader="Room"
+              formHeaderStyle={"text-lg font-medium text-[#0A0A0A]"}
+              styles="mt-1 w-full bg-white"
+              error={errors.room?.message}
+              value={value}
+              placeholder="Enter room number"
+              handleChangeText={onChange}
+              verify={false}
+              editable={!isSubmitting}
+            />
+          )}
         />
       </View>
 
@@ -276,34 +360,47 @@ const addSubject = () => {
           <View className="flex-1 mr-2">
             <Text className="text-lg font-medium text-[#0A0A0A] mb-1">Day</Text>
             <View className={"flex-row flex-1 justify-between items-center"}>
-              {days.map((day) => (
-                <CustomRadioButton
-                  key={day.full}
-                  letter={day.letter}
-                  selected={formData.onlineScheduleDay === day.id}
-                  onPress={() =>
-                    setFormData((prev) => ({
-                      ...prev,
-                      onlineScheduleDay: day.id,
-                    }))
-                  }
-                />
-              ))}
+              <Controller
+                name="onlineScheduleDay"
+                control={control}
+                render={({ field: { onChange, onBlur, value } }) =>
+                  days.map((day) => (
+                    <CustomRadioButton
+                      key={day.full}
+                      letter={day.letter}
+                      selected={value === day.id}
+                      onPress={() => onChange(day.id)} // Ensure the value updates
+                    />
+                  ))
+                }
+              />
             </View>
           </View>
           <View className="w-[35%]">
-            <FormField
-              formHeader="Time"
-              formHeaderStyle={"text-lg font-medium text-[#0A0A0A]"}
-              value={formatTime(formData.onlineScheduleTime)} // Format Date object
-              onFocus={(e) => {
-                e.target.blur();
-                setShowDatePickers((prev) => ({ ...prev, onlineTime: true }));
-              }}
-              placeholder="HH:MM"
-              styles="mt-1 w-full bg-white"
-              ref={onlineTextInputRef} // Reference for the TextInput
-              verify={false}
+            <Controller
+              name="onlineScheduleTime"
+              control={control}
+              render={({ field: { onChange, onBlur, value } }) => (
+                <FormField
+                  formHeader="Time"
+                  formHeaderStyle={"text-lg font-medium text-[#0A0A0A]"}
+                  styles="mt-1 w-full bg-white"
+                  error={errors.onlineScheduleTime?.message}
+                  value={value}
+                  placeholder="HH:MM"
+                  handleChangeText={onChange}
+                  onFocus={(e) => {
+                    e.target.blur();
+                    setShowDatePickers((prev) => ({
+                      ...prev,
+                      onlineTime: true,
+                    }));
+                  }}
+                  ref={onlineTextInputRef} // Reference for the TextInput
+                  verify={false}
+                  editable={!isSubmitting}
+                />
+              )}
             />
           </View>
         </View>
@@ -311,30 +408,37 @@ const addSubject = () => {
 
       {/* Instructor */}
       <View className="mb-4 p-4 rounded-md bg-white">
-        <FormField
-          formHeader="Instructor"
-          formHeaderStyle={"text-lg font-medium text-[#0A0A0A]"}
-          value={formData.instructor}
-          handleChangeText={(text) =>
-            setFormData((prev) => ({ ...prev, instructor: text }))
-          }
-          placeholder="Enter instructor name"
-          styles="mt-1 w-full bg-white"
-          verify={false}
+        <Controller
+          name="instructor"
+          control={control}
+          render={({ field: { onChange, onBlur, value } }) => (
+            <FormField
+              formHeader="Instructor"
+              formHeaderStyle={"text-lg font-medium text-[#0A0A0A]"}
+              containerStyles={"mb-2"}
+              styles="mt-1 w-full bg-white"
+              error={errors.instructor?.message}
+              value={value}
+              placeholder="Enter instructor name"
+              handleChangeText={onChange}
+              verify={false}
+              editable={!isSubmitting}
+            />
+          )}
         />
       </View>
 
       {/* Submit Button */}
       <CustomButton
         label={"Create Subject"}
-        styles={"rounded-md p-3 items-center bg-[#5CB88F] mb-5"}
-        onPress={handleSubmit}
+        styles={"rounded-md p-3 items-center bg-[#5CB88F] mb-8 mt-4"}
+        onPress={handleSubmit(onSubmit)}
         textStyle={"font-extrabold text-lg"}
       />
 
       {showDatePickers.f2fTime && (
         <DateTimePicker
-          value={formData.f2fScheduleTime}
+          value={new Date()} // Use current date as base
           mode="time"
           display="default"
           onChange={(event, selectedDate) =>
@@ -342,9 +446,10 @@ const addSubject = () => {
           }
         />
       )}
+
       {showDatePickers.onlineTime && (
         <DateTimePicker
-          value={formData.onlineScheduleTime}
+          value={new Date()} // Use current date as base
           mode="time"
           display="default"
           onChange={(event, selectedDate) =>
