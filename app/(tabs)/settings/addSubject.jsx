@@ -153,7 +153,7 @@ const addSubject = () => {
     [setValue]
   );
 
-  const onSubmit = async (data) => {
+  const onSubmit = (data) => {
     try {
       // Add your submission logic here
       console.log("Form submitted:", data);

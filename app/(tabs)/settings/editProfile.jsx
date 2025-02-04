@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import {
   View,
   Text,
@@ -15,9 +15,34 @@ import FormField from "../../../components/FormField";
 import { useForm, Controller } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { validateCredentials } from "../../../utils/validateProfile";
+import DateTimePicker from "@react-native-community/datetimepicker";
 
 const { width } = Dimensions.get("window");
 const COVER_HEIGHT = width * 0.5625; // 16:9 aspect ratio
+
+const formatDate = (date) => {
+  if (!(date instanceof Date)) {
+    date = new Date();
+  }
+  const months = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
+  ];
+  const month = months[date.getMonth()];
+  const day = date.getDate();
+  const year = date.getFullYear();
+  return `${month} ${day}, ${year}`;
+};
 
 const editProfile = () => {
   const [profileData, setProfileData] = useState({
@@ -29,6 +54,7 @@ const editProfile = () => {
     control,
     handleSubmit,
     formState: { errors, isSubmitting, isDirty },
+    setValue,
     trigger,
     watch,
   } = useForm({
@@ -38,11 +64,31 @@ const editProfile = () => {
     defaultValues: {
       school: "",
       location: "",
-      dob: "",
+      dob: formatDate(new Date()),
       email: "",
       contact: "",
     },
   });
+
+  const dobTextInputRef = useRef(null);
+  const [showDatePicker, setShowDatePicker] = useState(false);
+
+  const handleDateChange = useCallback(
+    (key, event, selectedDate) => {
+      if (event.type === "set" && selectedDate) {
+        dobTextInputRef.current?.blur();
+
+        // Store only the time string
+        const dateString = formatDate(selectedDate);
+        setValue(key, dateString);
+
+        setShowDatePicker(false);
+      } else {
+        setShowDatePicker(false);
+      }
+    },
+    [setValue]
+  );
 
   useEffect(() => {
     async () => {
@@ -144,6 +190,7 @@ const editProfile = () => {
                     containerStyles={"mb-4"}
                     styles="mt-1"
                     error={errors.school?.message}
+                    letterCase="words"
                     value={value}
                     onBlur={onBlur}
                     handleChangeText={onChange}
@@ -169,6 +216,32 @@ const editProfile = () => {
                     value={value}
                     onBlur={onBlur}
                     handleChangeText={onChange}
+                    editable={!isSubmitting}
+                    verify={false}
+                  />
+                )}
+              />
+            </View>
+
+            {/* Date of Birth Field */}
+            <View>
+              <Controller
+                name="dob"
+                control={control}
+                render={({ field: { onChange, onBlur, value } }) => (
+                  <FormField
+                    formHeader="Date of Birth"
+                    placeholder="MM:DD:YYYY"
+                    containerStyles={"mb-4"}
+                    styles="mt-1"
+                    error={errors.dob?.message}
+                    value={value}
+                    handleChangeText={onChange}
+                    onFocus={(e) => {
+                      e.target.blur();
+                      setShowDatePicker(true);
+                    }}
+                    ref={dobTextInputRef} // Reference for the TextInput
                     editable={!isSubmitting}
                     verify={false}
                   />
@@ -232,6 +305,17 @@ const editProfile = () => {
           />
         </View>
       </View>
+
+      {showDatePicker && (
+        <DateTimePicker
+          value={new Date()} // Use current date as base
+          mode="date"
+          display="default"
+          onChange={(event, selectedDate) =>
+            handleDateChange("dob", event, selectedDate)
+          }
+        />
+      )}
     </Container>
   );
 };

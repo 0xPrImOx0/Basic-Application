@@ -7,6 +7,8 @@ import SubjectCards from "../../components/SubjectCards";
 import courses from "../../lib/courses.json";
 import Container from "../../components/Container";
 import CourseCard from "../../components/CourseCard";
+import CustomButton from "../../components/CustomButton";
+import { router } from "expo-router";
 
 const home = () => {
   const oddCourses = Object.keys(courses)
@@ -49,18 +51,21 @@ const home = () => {
   };
 
   const toggleCourseCard = (courses, courseCode) => {
-    try {
-      const course = getCourseByCode(courses, courseCode);
-      if (!course) {
-        console.log(`No course found for the code: ${courseCode}`);
+    return () => {
+      // Return a callback function instead of executing immediately
+      try {
+        const course = getCourseByCode(courses, courseCode);
+        if (!course) {
+          console.log(`No course found for the code: ${courseCode}`);
+          return;
+        }
+        setDatas(course);
+        setIsButtonDisabled(true);
+        setIsCourseCardVisible(true);
+      } catch (err) {
+        console.log(err.message);
       }
-      console.log("Selected course:", course); // Debugging log
-      setDatas(course);
-      setIsButtonDisabled(true);
-      setIsCourseCardVisible(true);
-    } catch (err) {
-      console.log(err.message);
-    }
+    };
   };
 
   const closeCourseCard = () => {
@@ -171,7 +176,7 @@ const home = () => {
                     courseName={course.courseName}
                     courseSched1={`${course.f2fSchedule} ${course.roomDesignated}`}
                     courseSched2={course.onlineSchedule}
-                    onPress={() => toggleCourseCard(courses, course.courseCode)}
+                    onPress={toggleCourseCard(courses, course.courseCode)}
                     disabled={isButtonDisabled}
                   />
                 ))}
@@ -187,11 +192,25 @@ const home = () => {
                     courseName={course.courseName}
                     courseSched1={`${course.f2fSchedule} ${course.roomDesignated}`}
                     courseSched2={course.onlineSchedule}
-                    onPress={() => toggleCourseCard(courses, course.courseCode)}
+                    onPress={toggleCourseCard(courses, course.courseCode)}
                     disabled={isButtonDisabled}
                   />
                 ))}
               </View>
+            </View>
+
+            <View className="flex-row justify-between mx-3">
+              <CustomButton
+                label={"Add Subject"}
+                styles={"bg-[#5CB88F] flex-1 mr-2 p-2"}
+                onPress={() => router.push("/settings/addSubject")}
+              />
+
+              <CustomButton
+                label={"Delete Subject"}
+                styles={"bg-[#FF0004] flex-1 p-2"}
+                onPress={() => router.push("/settings/delSubject")}
+              />
             </View>
           </ShowMoreBox>
         </View>

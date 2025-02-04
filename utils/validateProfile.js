@@ -4,6 +4,7 @@ export const validateCredentials = yup.object({
   school: yup.string().required("This field is required."),
   location: yup.string().required("This field is required."),
   //   dob: yup.required("This field is required."),
+  dob: yup.string().required("This field is required."),
   email: yup
     .string()
     .required("This field is required.")
