@@ -43,7 +43,10 @@ const useUpdateProfile = () => {
             return { error: updateError.message };
           }
         } else {
-          return { error: "New email already exists for another user." };
+          return {
+            error: "New email already exists for another user.",
+            errorComponent: "email",
+          };
           // Handle the situation (e.g., show an error message to the user)
         }
       } else {

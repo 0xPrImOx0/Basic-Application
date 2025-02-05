@@ -18,7 +18,10 @@ import { validateCredentials } from "../../../utils/validateProfile";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { useAuth } from "../../../services/auth-provider";
 import useUpdateProfile from "../../../services/useUpdateProfile";
+import useFetchData from "../../../services/useFetchData";
 import Toast from "react-native-toast-message";
+import CustomLoader from "../../../components/CustomLoader";
+import { ref } from "yup";
 
 const { width } = Dimensions.get("window");
 const COVER_HEIGHT = width * 0.5625; // 16:9 aspect ratio
@@ -57,6 +60,26 @@ const formatToNumericalDate = (date) => {
 
   return `${year}-${month}-${day}`; // Returns YYYY-MM-DD
 };
+
+const formatToWordDate = (dateStr) => {
+  if (!dateStr) return "";
+
+  try {
+    // Convert the date string to a Date object
+    const date = new Date(dateStr);
+
+    // Get the components
+    const year = date.getFullYear();
+    const month = months[date.getMonth()].words;
+    const day = date.getDate();
+
+    return `${month} ${day}, ${year}`;
+  } catch (error) {
+    console.error("Error formatting date:", error, "for date:", dateStr);
+    return dateStr; // Return original if formatting fails
+  }
+};
+
 const editProfile = () => {
   const { session } = useAuth();
 
@@ -66,10 +89,20 @@ const editProfile = () => {
     coverPhoto: "https://via.placeholder.com/800x300",
   });
 
+  const { changeProfileInfo, isLoading } = useUpdateProfile();
+  const [errorComponent, setErrorComponent] = useState("");
+
+  const { useFetchProfileInfo, isLoading: loading } = useFetchData();
+
+  const [loadingText, setLoadingText] = useState("Save Changes");
+  const dobTextInputRef = useRef(null);
+  const [showDatePicker, setShowDatePicker] = useState(false);
+  const [refresh, setRefresh] = useState(false);
+
   const {
     control,
     handleSubmit,
-    formState: { errors, isSubmitting, isDirty },
+    formState: { errors, isSubmitting, isDirty, dirtyFields },
     setValue,
     trigger,
     watch,
@@ -86,11 +119,6 @@ const editProfile = () => {
       contact: "",
     },
   });
-  const { changeProfileInfo, isLoading } = useUpdateProfile();
-
-  const [loadingText, setLoadingText] = useState("Save Changes");
-  const dobTextInputRef = useRef(null);
-  const [showDatePicker, setShowDatePicker] = useState(false);
 
   const handleDateChange = useCallback(
     (key, event, selectedDate) => {
@@ -99,7 +127,9 @@ const editProfile = () => {
 
         // Store only the time string
         const dateString = formatDate(selectedDate);
-        setValue(key, dateString);
+        setValue(key, dateString, {
+          shouldDirty: true,
+        });
 
         setShowDatePicker(false);
       } else {
@@ -109,8 +139,9 @@ const editProfile = () => {
     [setValue]
   );
 
+  // Handle permissions
   useEffect(() => {
-    async () => {
+    const requestPermissions = async () => {
       if (Platform.OS !== "web") {
         const { status } =
           await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -119,7 +150,25 @@ const editProfile = () => {
         }
       }
     };
+
+    requestPermissions();
   }, []);
+
+  // Handle profile fetching
+  useEffect(() => {
+    const fetchProfile = async () => {
+      const { data } = await useFetchProfileInfo({ session });
+      console.log("DATA RECEIVED HERE IN ASYNC:", data);
+
+      setValue("school", data.university);
+      setValue("location", data.city);
+      setValue("dob", formatToWordDate(data.dob));
+      setValue("email", data.email);
+      setValue("contact", data.phone_number);
+    };
+
+    fetchProfile();
+  }, [session, refresh]); // Add session as a dependency
 
   const pickImage = async (type) => {
     try {
@@ -158,6 +207,10 @@ const editProfile = () => {
         dob: formatDate,
       });
 
+      {
+        result.errorComponent && setErrorComponent("Password Incorrect!");
+      }
+
       if (result.success) {
         Toast.show({
           type: "success",
@@ -177,6 +230,7 @@ const editProfile = () => {
       });
     } finally {
       console.log("DONE PROCESSING");
+      setRefresh(!refresh);
     }
   };
 
@@ -196,8 +250,13 @@ const editProfile = () => {
     return () => clearInterval(interval);
   }, [isLoading]);
 
+  console.log(isDirty);
+  console.log(dirtyFields);
+
   return (
     <Container bg={"#F9FAFB"}>
+      <CustomLoader visible={loading} message="Fetching Data" />
+
       {/* Cover Photo Section */}
       <View className="relative">
         <Image
@@ -327,10 +386,12 @@ const editProfile = () => {
                   <FormField
                     formHeader={"Email Address"}
                     placeholder={"Enter your Email"}
+                    type="password"
                     containerStyles={"mb-4"}
                     styles="mt-1"
                     keyboardType="email-address"
-                    error={errors.email?.message}
+                    error={errorComponent || errors.email?.message}
+                    onFocus={() => setErrorComponent("")}
                     value={value}
                     onBlur={onBlur}
                     handleChangeText={onChange}
@@ -370,7 +431,18 @@ const editProfile = () => {
             label={loadingText}
             styles={`w-full bg-[#161515] h-12 mb-2 ${isLoading && "text-xl"}`}
             textStyle="font-medium text-lg text-[#fff] p-2"
-            onPress={handleSubmit(onSubmit)}
+            onPress={() => {
+              console.log("Dirty Fields:", dirtyFields);
+
+              Object.keys(dirtyFields).length > 0
+                ? handleSubmit(onSubmit)() // Note the extra () to execute handleSubmit
+                : Toast.show({
+                    type: "error",
+                    text1: "No Data Changed!",
+                    text2:
+                      "Please change data in input fields before submitting",
+                  });
+            }}
             disabled={isLoading}
           />
         </View>

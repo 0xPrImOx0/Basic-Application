@@ -71,7 +71,7 @@ const manageAccount = () => {
             {/* Profile Picture Section */}
             <View className="relative items-center mb-3">
               <Image
-                source={Images.studGrad}
+                source={Images.daugCrop}
                 style={{ width: width * 0.35, height: width * 0.35 }}
                 className="rounded-full bg-gray-200 border-4 border-white"
               />
