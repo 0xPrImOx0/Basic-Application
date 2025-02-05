@@ -16,35 +16,51 @@ import { useForm, Controller } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { validateCredentials } from "../../../utils/validateProfile";
 import DateTimePicker from "@react-native-community/datetimepicker";
+import { useAuth } from "../../../services/auth-provider";
+import useUpdateProfile from "../../../services/useUpdateProfile";
+import Toast from "react-native-toast-message";
 
 const { width } = Dimensions.get("window");
 const COVER_HEIGHT = width * 0.5625; // 16:9 aspect ratio
+const months = [
+  { words: "January", number: "1" },
+  { words: "February", number: "2" },
+  { words: "March", number: "3" },
+  { words: "April", number: "4" },
+  { words: "May", number: "5" },
+  { words: "June", number: "6" },
+  { words: "July", number: "7" },
+  { words: "August", number: "8" },
+  { words: "September", number: "9" },
+  { words: "October", number: "10" },
+  { words: "November", number: "11" },
+  { words: "December", number: "12" },
+];
 
 const formatDate = (date) => {
   if (!(date instanceof Date)) {
     date = new Date();
   }
-  const months = [
-    "January",
-    "February",
-    "March",
-    "April",
-    "May",
-    "June",
-    "July",
-    "August",
-    "September",
-    "October",
-    "November",
-    "December",
-  ];
-  const month = months[date.getMonth()];
+
+  const month = months[date.getMonth()].words;
   const day = date.getDate();
   const year = date.getFullYear();
   return `${month} ${day}, ${year}`;
 };
 
+const formatToNumericalDate = (date) => {
+  const formatDate = date.split(/[\s,]+/); // ["January", "1", "2022"]
+
+  const month = months.find((m) => m.words === formatDate[0]).number;
+  const day = formatDate[1];
+  const year = formatDate[2];
+
+  return `${year}-${month}-${day}`; // Returns YYYY-MM-DD
+};
 const editProfile = () => {
+  const { session } = useAuth();
+
+  const [isDobDirty, setIsDobDirty] = useState(true);
   const [profileData, setProfileData] = useState({
     profilePic: "https://via.placeholder.com/150",
     coverPhoto: "https://via.placeholder.com/800x300",
@@ -57,6 +73,7 @@ const editProfile = () => {
     setValue,
     trigger,
     watch,
+    reset,
   } = useForm({
     resolver: yupResolver(validateCredentials),
     mode: "onTouched",
@@ -64,12 +81,14 @@ const editProfile = () => {
     defaultValues: {
       school: "",
       location: "",
-      dob: formatDate(new Date()),
+      dob: isDobDirty || formatDate(new Date()),
       email: "",
       contact: "",
     },
   });
+  const { changeProfileInfo, isLoading } = useUpdateProfile();
 
+  const [loadingText, setLoadingText] = useState("Save Changes");
   const dobTextInputRef = useRef(null);
   const [showDatePicker, setShowDatePicker] = useState(false);
 
@@ -123,11 +142,59 @@ const editProfile = () => {
     }
   };
 
-  const onSubmit = (data) => {
+  const onSubmit = async (data) => {
     // Handle save logic here
+    const formatDate = formatToNumericalDate(data.dob);
+
     console.log("Save button clicked");
+    console.log("date of birth formatted", formatDate);
     console.log("Profile data saved:", data, profileData);
+    console.log("Session provided:", session);
+
+    try {
+      const result = await changeProfileInfo({
+        session,
+        formData: data,
+        dob: formatDate,
+      });
+
+      if (result.success) {
+        Toast.show({
+          type: "success",
+          text1: "Profile Information Updated!",
+        });
+        reset();
+      } else {
+        return Toast.show({
+          type: "error",
+          text1: result.error || "Failed to Update Profile Information!",
+        });
+      }
+    } catch (err) {
+      Toast.show({
+        type: "error",
+        text1: err.message || "An error occurred", // Use err.message instead of err directly
+      });
+    } finally {
+      console.log("DONE PROCESSING");
+    }
   };
+
+  useEffect(() => {
+    let dotIndex = 1;
+    let interval;
+
+    if (isLoading) {
+      interval = setInterval(() => {
+        setLoadingText(`Saving Changes${".".repeat(dotIndex)}`);
+        dotIndex = dotIndex === 3 ? 1 : dotIndex + 1;
+      }, 300); // Change dots every 300ms
+    }
+
+    // Cleanup when isLoading becomes false
+    setLoadingText("Save Changes");
+    return () => clearInterval(interval);
+  }, [isLoading]);
 
   return (
     <Container bg={"#F9FAFB"}>
@@ -213,6 +280,7 @@ const editProfile = () => {
                     containerStyles={"mb-4"}
                     styles="mt-1"
                     error={errors.location?.message}
+                    letterCase="words"
                     value={value}
                     onBlur={onBlur}
                     handleChangeText={onChange}
@@ -231,7 +299,7 @@ const editProfile = () => {
                 render={({ field: { onChange, onBlur, value } }) => (
                   <FormField
                     formHeader="Date of Birth"
-                    placeholder="MM:DD:YYYY"
+                    placeholder={"MM:DD:YYYY"}
                     containerStyles={"mb-4"}
                     styles="mt-1"
                     error={errors.dob?.message}
@@ -239,6 +307,7 @@ const editProfile = () => {
                     handleChangeText={onChange}
                     onFocus={(e) => {
                       e.target.blur();
+                      setIsDobDirty(false);
                       setShowDatePicker(true);
                     }}
                     ref={dobTextInputRef} // Reference for the TextInput
@@ -298,10 +367,11 @@ const editProfile = () => {
 
           {/* Save Button */}
           <CustomButton
-            label="Save Changes"
-            styles="w-full bg-[#161515] h-12 mb-2"
+            label={loadingText}
+            styles={`w-full bg-[#161515] h-12 mb-2 ${isLoading && "text-xl"}`}
             textStyle="font-medium text-lg text-[#fff] p-2"
             onPress={handleSubmit(onSubmit)}
+            disabled={isLoading}
           />
         </View>
       </View>
@@ -314,6 +384,8 @@ const editProfile = () => {
           onChange={(event, selectedDate) =>
             handleDateChange("dob", event, selectedDate)
           }
+          maximumDate={new Date()}
+          minimumDate={new Date(1950, 0, 1)}
         />
       )}
     </Container>

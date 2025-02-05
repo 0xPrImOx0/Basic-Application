@@ -42,7 +42,7 @@ const changePassword = () => {
       confirmNewPassword: "",
     },
   });
-  const { changePasswordData, isLoading, errorMessage } = useChangePassword();
+  const { changePasswordData, isLoading } = useChangePassword();
   const [errorComponent, setErrorComponent] = useState("");
 
   const [loadingText, setLoadingText] = useState("Save New Password");
