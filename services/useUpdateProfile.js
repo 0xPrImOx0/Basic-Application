@@ -25,7 +25,7 @@ const useUpdateProfile = () => {
       console.log("DATA EXISTED:", existingUser);
 
       if (fetchError) {
-        return { error: fetchError };
+        return { error: fetchError.message };
       } else if (existingUser) {
         if (existingUser.user_uuid === session.user.id) {
           const { error: updateError } = await supabase

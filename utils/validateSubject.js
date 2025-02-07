@@ -9,10 +9,12 @@ const validateSubject = yup.object({
   courseType: yup.string().required("This field is required."),
   section: yup.string().required("This field is required."),
   f2fScheduleDay: yup.string().required("This field is required."),
-  f2fScheduleTime: yup.string().required("This field is required."), // Changed to string
-  room: yup.string().required("This field is required."),
+  f2fScheduleTimeStart: yup.string().required("This field is required."), // Changed to string
+  f2fScheduleTimeEnd: yup.string().required("This field is required."), // Changed to string
+  roomDesignated: yup.string().required("This field is required."),
   onlineScheduleDay: yup.string().required("This field is required."),
-  onlineScheduleTime: yup.string().required("This field is required."), // Changed to string
+  onlineScheduleTimeStart: yup.string().required("This field is required."), // Changed to string
+  onlineScheduleTimeEnd: yup.string().required("This field is required."), // Changed to string
   instructor: yup
     .string()
     .required("This field is required.")

@@ -18,6 +18,10 @@ import CustomRadioButton from "../../../components/CustomRadioButton";
 import { useForm, Controller } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import validateSubject from "../../../utils/validateSubject";
+import useUpdateSubject from "../../../services/useUpdateSubject";
+import Toast from "react-native-toast-message";
+import { useAuth } from "../../../services/auth-provider";
+import CustomLoader from "../../../components/CustomLoader";
 
 const days = [
   { id: "Sun", letter: "S", full: "Sunday" },
@@ -39,9 +43,14 @@ const formatTime = (date) => {
 };
 
 const addSubject = () => {
+  const { session } = useAuth();
+
   const [formData, setFormData] = useState({
     icon: null,
   });
+  const [isLoading, setIsLoading] = useState(false);
+
+  const { changeSubject } = useUpdateSubject();
 
   const {
     control,
@@ -49,6 +58,7 @@ const addSubject = () => {
     formState: { errors, isSubmitting },
     setValue,
     watch,
+    reset,
   } = useForm({
     resolver: yupResolver(validateSubject),
     mode: "onTouched",
@@ -60,10 +70,12 @@ const addSubject = () => {
       courseType: "major",
       section: "",
       f2fScheduleDay: "Mon",
-      f2fScheduleTime: formatTime(new Date()), // Will store as string
-      room: "",
+      f2fScheduleTimeStart: formatTime(new Date()), // Will store as string
+      f2fScheduleTimeEnd: formatTime(new Date()), // Will store as string
+      roomDesignated: "",
       onlineScheduleDay: "Mon",
-      onlineScheduleTime: formatTime(new Date()), // Will store as string
+      onlineScheduleTimeStart: formatTime(new Date()), // Will store as string
+      onlineScheduleTimeEnd: formatTime(new Date()), // Will store as string
       instructor: "",
     },
   });
@@ -73,11 +85,15 @@ const addSubject = () => {
   // console.log("Form is submitting:", isSubmitting);
 
   const f2fTextInputRef = useRef(null);
+  const f2fTextInputRefEnd = useRef(null);
   const onlineTextInputRef = useRef(null);
+  const onlineTextInputRefEnd = useRef(null);
 
   const [showDatePickers, setShowDatePickers] = useState({
-    f2fTime: false,
-    onlineTime: false,
+    f2fScheduleTimeStart: false,
+    f2fScheduleTimeEnd: false,
+    onlineScheduleTimeStart: false,
+    onlineScheduleTimeEnd: false,
   });
 
   const requestPermission = async () => {
@@ -85,10 +101,11 @@ const addSubject = () => {
       const { status } =
         await ImagePicker.requestMediaLibraryPermissionsAsync();
       if (status !== "granted") {
-        Alert.alert(
-          "Sorry",
-          "We need camera roll permissions to make this work!"
-        );
+        Toast.show({
+          type: "error",
+          text1: "Sorry",
+          text2: "We need camera roll permissions to make this work!",
+        });
         return false;
       }
       return true;
@@ -133,6 +150,10 @@ const addSubject = () => {
           f2fTextInputRef.current?.blur();
         } else if (key === "onlineScheduleTime") {
           onlineTextInputRef.current?.blur();
+        } else if (key === "f2fScheduleTimeEnd") {
+          f2fTextInputRefEnd.current?.blur();
+        } else if (key === "onlineScheduleTimeEnd") {
+          onlineTextInputRefEnd.current?.blur();
         }
 
         // Store only the time string
@@ -141,30 +162,56 @@ const addSubject = () => {
 
         setShowDatePickers((prev) => ({
           ...prev,
-          [key === "f2fScheduleTime" ? "f2fTime" : "onlineTime"]: false,
+          [key]: false,
         }));
       } else {
         setShowDatePickers((prev) => ({
           ...prev,
-          [key === "f2fScheduleTime" ? "f2fTime" : "onlineTime"]: false,
+          [key]: false,
         }));
       }
     },
     [setValue]
   );
 
-  const onSubmit = (data) => {
+  const onSubmit = async (data) => {
     try {
+      setIsLoading(true);
       // Add your submission logic here
-      console.log("Form submitted:", data);
+
+      console.log("SUBMITTTINGGGGGG");
+
+      const result = await changeSubject({ session, formData: data });
+
+      if (result.success) {
+        Toast.show({
+          type: "success",
+          text1: "Course Added Successfully!",
+        });
+        reset();
+      } else {
+        return Toast.show({
+          type: "error",
+          text1: result.error || "Failed to add course!",
+        });
+      }
+
+      const resultLog = console.log("Form submitted:", data);
     } catch (error) {
-      console.error("Submit error:", error);
-      Alert.alert("Error", "Failed to submit form. Please try again.");
+      console.error("Submit error:", error.message);
+      Toast.show({
+        type: "error",
+        text1: err.message || "Failed to submit form. Please try again.", // Use err.message instead of err directly
+      });
+    } finally {
+      setIsLoading(false);
     }
   };
 
   return (
     <Container savStyles={"px-4 bg-[#d9d9d9]"} bg={"#d9d9d9"} pt={"15"}>
+      <CustomLoader visible={isLoading} message="Adding Subject" />
+
       {/* Icon Upload */}
       <View className="mb-4 py-3 bg-white rounded-md px-3">
         <Text className="text-lg font-medium text-[#0A0A0A] mb-2">
@@ -231,6 +278,7 @@ const addSubject = () => {
               formHeaderStyle={"text-lg font-medium text-[#0A0A0A]"}
               containerStyles={"mb-6"}
               styles="mt-1 w-full bg-white"
+              letterCase="words"
               error={errors.courseName?.message}
               value={value}
               placeholder="Enter course name"
@@ -271,6 +319,7 @@ const addSubject = () => {
               containerStyles={"mb-1"}
               styles="mt-1 w-full bg-white"
               error={errors.section?.message}
+              letterCase={"characters"}
               value={value}
               placeholder="Enter section"
               handleChangeText={onChange}
@@ -306,24 +355,56 @@ const addSubject = () => {
               />
             </View>
           </View>
-          <View className="w-[35%]">
+        </View>
+        <View className="flex-row justify-between mb-3">
+          <View className="w-[48%]">
             <Controller
-              name="f2fScheduleTime"
+              name="f2fScheduleTimeStart"
               control={control}
               render={({ field: { onChange, onBlur, value } }) => (
                 <FormField
-                  formHeader="Time"
+                  formHeader="Time Start"
                   formHeaderStyle={"text-lg font-medium text-[#0A0A0A]"}
                   styles="mt-1 w-full bg-white"
-                  error={errors.f2fScheduleTime?.message}
+                  error={errors.f2fScheduleTimeStart?.message}
                   value={value}
                   placeholder="HH:MM"
                   handleChangeText={onChange}
                   onFocus={(e) => {
                     e.target.blur();
-                    setShowDatePickers((prev) => ({ ...prev, f2fTime: true }));
+                    setShowDatePickers((prev) => ({
+                      ...prev,
+                      f2fScheduleTimeStart: true,
+                    }));
                   }}
                   ref={f2fTextInputRef} // Reference for the TextInput
+                  verify={false}
+                  editable={!isSubmitting}
+                />
+              )}
+            />
+          </View>
+          <View className="w-[48%]">
+            <Controller
+              name="f2fScheduleTimeEnd"
+              control={control}
+              render={({ field: { onChange, onBlur, value } }) => (
+                <FormField
+                  formHeader="Time End"
+                  formHeaderStyle={"text-lg font-medium text-[#0A0A0A]"}
+                  styles="mt-1 w-full bg-white"
+                  error={errors.f2fScheduleTimeEnd?.message}
+                  value={value}
+                  placeholder="HH:MM"
+                  handleChangeText={onChange}
+                  onFocus={(e) => {
+                    e.target.blur();
+                    setShowDatePickers((prev) => ({
+                      ...prev,
+                      f2fScheduleTimeEnd: true,
+                    }));
+                  }}
+                  ref={f2fTextInputRefEnd} // Reference for the TextInput
                   verify={false}
                   editable={!isSubmitting}
                 />
@@ -333,14 +414,14 @@ const addSubject = () => {
         </View>
 
         <Controller
-          name="room"
+          name="roomDesignated"
           control={control}
           render={({ field: { onChange, onBlur, value } }) => (
             <FormField
               formHeader="Room"
               formHeaderStyle={"text-lg font-medium text-[#0A0A0A]"}
               styles="mt-1 w-full bg-white"
-              error={errors.room?.message}
+              error={errors.roomDesignated?.message}
               value={value}
               placeholder="Enter room number"
               handleChangeText={onChange}
@@ -356,7 +437,7 @@ const addSubject = () => {
         <Text className="text-xl font-extrabold text-[#0A0A0A] mb-2">
           Online Schedule
         </Text>
-        <View className="flex-row justify-between mb-3">
+        <View className="justify-between mb-3">
           <View className="flex-1 mr-2">
             <Text className="text-lg font-medium text-[#0A0A0A] mb-1">Day</Text>
             <View className={"flex-row flex-1 justify-between items-center"}>
@@ -376,16 +457,18 @@ const addSubject = () => {
               />
             </View>
           </View>
-          <View className="w-[35%]">
+        </View>
+        <View className="flex-row justify-between bg-white rounded-md mb-4">
+          <View className="w-[48%]">
             <Controller
-              name="onlineScheduleTime"
+              name="onlineScheduleTimeStart"
               control={control}
               render={({ field: { onChange, onBlur, value } }) => (
                 <FormField
-                  formHeader="Time"
+                  formHeader="Time Start"
                   formHeaderStyle={"text-lg font-medium text-[#0A0A0A]"}
                   styles="mt-1 w-full bg-white"
-                  error={errors.onlineScheduleTime?.message}
+                  error={errors.onlineScheduleTimeStart?.message}
                   value={value}
                   placeholder="HH:MM"
                   handleChangeText={onChange}
@@ -393,10 +476,37 @@ const addSubject = () => {
                     e.target.blur();
                     setShowDatePickers((prev) => ({
                       ...prev,
-                      onlineTime: true,
+                      onlineScheduleTimeStart: true,
                     }));
                   }}
                   ref={onlineTextInputRef} // Reference for the TextInput
+                  verify={false}
+                  editable={!isSubmitting}
+                />
+              )}
+            />
+          </View>
+          <View className="w-[48%]">
+            <Controller
+              name="onlineScheduleTimeEnd"
+              control={control}
+              render={({ field: { onChange, onBlur, value } }) => (
+                <FormField
+                  formHeader="Time End"
+                  formHeaderStyle={"text-lg font-medium text-[#0A0A0A]"}
+                  styles="mt-1 w-full bg-white"
+                  error={errors.onlineScheduleTimeEnd?.message}
+                  value={value}
+                  placeholder="HH:MM"
+                  handleChangeText={onChange}
+                  onFocus={(e) => {
+                    e.target.blur();
+                    setShowDatePickers((prev) => ({
+                      ...prev,
+                      onlineScheduleTimeEnd: true,
+                    }));
+                  }}
+                  ref={onlineTextInputRefEnd} // Reference for the TextInput
                   verify={false}
                   editable={!isSubmitting}
                 />
@@ -436,24 +546,46 @@ const addSubject = () => {
         textStyle={"font-extrabold text-lg"}
       />
 
-      {showDatePickers.f2fTime && (
+      {showDatePickers.f2fScheduleTimeStart && (
         <DateTimePicker
           value={new Date()} // Use current date as base
           mode="time"
           display="default"
           onChange={(event, selectedDate) =>
-            handleTimeChange("f2fScheduleTime", event, selectedDate)
+            handleTimeChange("f2fScheduleTimeStart", event, selectedDate)
           }
         />
       )}
 
-      {showDatePickers.onlineTime && (
+      {showDatePickers.f2fScheduleTimeEnd && (
         <DateTimePicker
           value={new Date()} // Use current date as base
           mode="time"
           display="default"
           onChange={(event, selectedDate) =>
-            handleTimeChange("onlineScheduleTime", event, selectedDate)
+            handleTimeChange("f2fScheduleTimeEnd", event, selectedDate)
+          }
+        />
+      )}
+
+      {showDatePickers.onlineScheduleTimeStart && (
+        <DateTimePicker
+          value={new Date()} // Use current date as base
+          mode="time"
+          display="default"
+          onChange={(event, selectedDate) =>
+            handleTimeChange("onlineScheduleTimeStart", event, selectedDate)
+          }
+        />
+      )}
+
+      {showDatePickers.onlineScheduleTimeEnd && (
+        <DateTimePicker
+          value={new Date()} // Use current date as base
+          mode="time"
+          display="default"
+          onChange={(event, selectedDate) =>
+            handleTimeChange("onlineScheduleTimeEnd", event, selectedDate)
           }
         />
       )}

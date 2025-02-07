@@ -98,6 +98,8 @@ const editProfile = () => {
   const dobTextInputRef = useRef(null);
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [refresh, setRefresh] = useState(false);
+  const [isProfileDirty, setIsProfileDirty] = useState(false);
+  const [isCoverDirty, setIsCoverDirty] = useState(false);
 
   const {
     control,
@@ -179,11 +181,34 @@ const editProfile = () => {
       });
 
       if (!result.canceled && result.assets && result.assets[0]) {
+        // const img = result.assets[0];
+
+        // // Get base64 string
+        // const base64 = await FileSystem.readAsStringAsync(img.uri, {
+        //   encoding: "base64",
+        // });
+
+        // // Get file extension and MIME type
+        // const fileExtension = img.uri.split(".").pop();
+        // const contentType = `image/${fileExtension}`;
+        // const filePath = `${session?.user.id}/${Date.now()}.${fileExtension}`;
+
+        // const { data, error } = await supabase.storage
+        //   .from("users")
+        //   .upload(result.assets[0].uri, {
+        //     cacheControl: "3600",
+        //     upsert: false,
+        //   });
+
         setProfileData((prev) => ({
           ...prev,
           [type === "profile" ? "profilePic" : "coverPhoto"]:
             result.assets[0].uri,
         }));
+
+        {
+          type === "profile" ? setIsProfileDirty(true) : setIsCoverDirty(true);
+        }
       }
     } catch (error) {
       console.error("Error picking image:", error);
