@@ -28,3 +28,5 @@ const data = {
     },
   },
 };
+
+const photo = '{"error":"new row violates row-level security policy"}';

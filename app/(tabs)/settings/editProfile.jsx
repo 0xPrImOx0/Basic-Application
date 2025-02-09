@@ -178,38 +178,21 @@ const editProfile = () => {
         allowsEditing: true,
         aspect: type === "profile" ? [1, 1] : [16, 9],
         quality: 1,
+        includeBase64: true,
       });
 
-      if (!result.canceled && result.assets && result.assets[0]) {
-        // const img = result.assets[0];
-
-        // // Get base64 string
-        // const base64 = await FileSystem.readAsStringAsync(img.uri, {
-        //   encoding: "base64",
-        // });
-
-        // // Get file extension and MIME type
-        // const fileExtension = img.uri.split(".").pop();
-        // const contentType = `image/${fileExtension}`;
-        // const filePath = `${session?.user.id}/${Date.now()}.${fileExtension}`;
-
-        // const { data, error } = await supabase.storage
-        //   .from("users")
-        //   .upload(result.assets[0].uri, {
-        //     cacheControl: "3600",
-        //     upsert: false,
-        //   });
-
+      if (!result.canceled && result.assets && result.assets[0])
         setProfileData((prev) => ({
           ...prev,
           [type === "profile" ? "profilePic" : "coverPhoto"]:
             result.assets[0].uri,
         }));
 
-        {
-          type === "profile" ? setIsProfileDirty(true) : setIsCoverDirty(true);
-        }
+      {
+        type === "profile" ? setIsProfileDirty(true) : setIsCoverDirty(true);
       }
+
+      console.log("THIS IS THEE RESULT DATA OF PROFILES: ", result);
     } catch (error) {
       console.error("Error picking image:", error);
       alert("Error picking image. Please try again.");
