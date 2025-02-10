@@ -29,4 +29,22 @@ const data = {
   },
 };
 
-const photo = '{"error":"new row violates row-level security policy"}';
+const photo = {
+  assets: [
+    {
+      assetId: null,
+      base64: null,
+      duration: null,
+      exif: null,
+      fileName: "810cc371-ae46-4260-8241-f851066d50fd.jpeg",
+      fileSize: 199106,
+      height: 1080,
+      mimeType: "image/jpeg",
+      rotation: null,
+      type: "image",
+      uri: "file:///data/user/0/host.exp.exponent/cache/ExperienceData/%2540d.rey34%252FAppDevelopment/ImagePicker/810cc371-ae46-4260-8241-f851066d50fd.jpeg",
+      width: 1080,
+    },
+  ],
+  canceled: false,
+};

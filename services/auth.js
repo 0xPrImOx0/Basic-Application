@@ -19,6 +19,10 @@ export async function createAccount(email, password, fullName) {
     return { error: signupError };
   }
 
+  console.log("DEBUGGING USER:", user);
+
+  await new Promise((resolve) => setTimeout(resolve, 1000)); // Delay for 1 second
+
   // Insert the user details into the public.users table
   const { error: insertError } = await supabase.from("users").insert([
     {
@@ -29,8 +33,10 @@ export async function createAccount(email, password, fullName) {
   ]);
 
   if (insertError) {
-    return { error: insertError };
+    return { error: "INSERT ERROR", insertError };
   }
+
+  console.log("INSERT ERROR REACHED HERE");
 
   const { user: logInUser, error: logInError } = await logIn(email, password);
 
@@ -38,7 +44,28 @@ export async function createAccount(email, password, fullName) {
     return { user: null, error: logInError };
   }
 
-  return { user: logInUser, error: null };
+  console.log("LOGINERROR REACHED HERE");
+
+  const folderPath = `users/${logInUser.user.id}/dummy.txt`; // Ensure it includes a filename
+  const file = new Blob(["dummy content"], { type: "text/plain" });
+
+  console.log("FILE REACHED HERE");
+
+  const { data: bucketData, error: bucketError } = await supabase.storage
+    .from("user-uploads") // Ensure this bucket exists in Supabase
+    .upload(folderPath, file, {
+      cacheControl: "3600",
+      upsert: false,
+    });
+
+  console.log("Upload Response:", bucketData, bucketError);
+
+  if (bucketError) {
+    console.error("Upload Error:", bucketError);
+    return { user: logInUser, error: bucketError };
+  }
+
+  return { user: logInUser, bucket: bucketData, error: null };
 }
 
 // // Example usage
