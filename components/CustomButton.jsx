@@ -1,5 +1,6 @@
 import { Text, Image, TouchableOpacity, Keyboard } from "react-native";
 import React from "react";
+import { AdvancedImage } from "cloudinary-react-native";
 
 const CustomButton = ({
   children,
@@ -13,6 +14,8 @@ const CustomButton = ({
   iconStyle,
   extraIconStyle,
   onPressOut,
+  advancedIcon,
+  onLoad, //used For set Loading in AdvancedImage COmponent
 }) => {
   return (
     <TouchableOpacity
@@ -29,6 +32,17 @@ const CustomButton = ({
           resizeMode="contain"
           tintColor={iconTint}
           style={extraIconStyle}
+        />
+      ) : (
+        ""
+      )}
+
+      {advancedIcon ? (
+        <AdvancedImage
+          cldImg={advancedIcon}
+          className={`${iconStyle}`}
+          style={extraIconStyle}
+          onLoad={onLoad}
         />
       ) : (
         ""

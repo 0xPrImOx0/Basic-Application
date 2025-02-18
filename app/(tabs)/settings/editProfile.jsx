@@ -25,6 +25,13 @@ import { AdvancedImage } from "cloudinary-react-native";
 import axios from "axios";
 import cld from "../../../lib/cloudinary";
 import CryptoJS from "crypto-js";
+import checkIfImageExist from "../../../utils/checkIfImageExist";
+
+// Import required actions and qualifiers.
+import { thumbnail } from "@cloudinary/url-gen/actions/resize";
+import { byRadius } from "@cloudinary/url-gen/actions/roundCorners";
+import { focusOn } from "@cloudinary/url-gen/qualifiers/gravity";
+import { FocusOn } from "@cloudinary/url-gen/qualifiers/focusOn";
 
 const { width } = Dimensions.get("window");
 const COVER_HEIGHT = width * 0.5625; // 16:9 aspect ratio
@@ -104,6 +111,10 @@ const editProfile = () => {
   const [refresh, setRefresh] = useState(false);
   const [isProfileDirty, setIsProfileDirty] = useState(false);
   const [isCoverDirty, setIsCoverDirty] = useState(false);
+  const [isProfileExist, setIsProfileExist] = useState(false);
+  const [isCoverExist, setIsCoverExist] = useState(false);
+  const [isProfileLoading, setIsProfileLoading] = useState(true);
+  const [isCoverLoading, setIsCoverLoading] = useState(true);
 
   const {
     control,
@@ -125,6 +136,10 @@ const editProfile = () => {
       contact: "",
     },
   });
+
+  // Use the image with public ID, 'front_face'.
+  const fetchProfile = cld.image(`profile-${session.user.id}`);
+  const fetchCover = cld.image(`cover-${session.user.id}`);
 
   const handleDateChange = useCallback(
     (key, event, selectedDate) => {
@@ -160,8 +175,21 @@ const editProfile = () => {
       }
     };
 
+    if (session) {
+      const validateProfile = checkIfImageExist(`profile-${session.user.id}`);
+      {
+        validateProfile && setIsProfileExist(true);
+      }
+      const validateCover = checkIfImageExist(`cover-${session.user.id}`);
+      {
+        validateCover && setIsCoverExist(true);
+      }
+    }
+
     requestPermissions();
   }, []);
+
+  console.log("isProfileExist & isCoverExist: ", isProfileExist, isCoverExist);
 
   // Handle profile fetching
   useEffect(() => {
@@ -369,40 +397,84 @@ const editProfile = () => {
 
   return (
     <Container bg={"#F9FAFB"}>
-      <CustomLoader visible={loading} message="Fetching Data" />
+      <CustomLoader
+        visible={loading || isProfileLoading || isCoverLoading}
+        message="Fetching Data"
+      />
 
       {/* Cover Photo Section */}
       <View className="relative">
-        <Image
-          source={{ uri: profileData.coverPhoto }}
-          style={{ width: width, height: COVER_HEIGHT }}
-          className="bg-gray-300"
-          resizeMode="cover"
-        />
+        {isCoverExist ? (
+          <AdvancedImage
+            cldImg={fetchCover}
+            style={{ width: width, height: COVER_HEIGHT }}
+            className="bg-gray-300"
+            onLoad={() => {
+              setIsCoverLoading(false);
+            }}
+          />
+        ) : (
+          <Image
+            source={{ uri: profileData.coverPhoto }}
+            style={{ width: width, height: COVER_HEIGHT }}
+            className="bg-gray-300"
+            resizeMode="cover"
+          />
+        )}
 
         <CustomButton
           label={"Change Cover"}
           styles={`relative bottom-[15%] left-[72%] bg-black/50 px-2 py-2 rounded-lg w-28`}
           textStyle={"text-white text-sm font-medium w-full"}
-          onPress={() => pickImage("cover")}
+          onPress={() => {
+            setIsCoverExist(false);
+            pickImage("cover");
+          }}
         />
       </View>
 
       <View style={{ paddingHorizontal: width * 0.04 }} className="-mt-32">
         {/* Profile Picture Section */}
         <View className="items-center mb-8">
-          <CustomButton
-            onPress={() => pickImage("profile")}
-            styles={"relative"}
-            icon={{ uri: profileData.profilePic }}
-            extraIconStyle={{ width: width * 0.35, height: width * 0.35 }}
-            iconStyle={"rounded-full bg-gray-200 border-4 border-white"}
-            label="Edit"
-            textStyle={
-              "text-white text-sm font-medium absolute bottom-3 right-3 bg-gray-900 p-3 rounded-full shadow-xl"
-            }
-          />
+          {isProfileExist ? (
+            <CustomButton
+              onPress={() => {
+                setIsProfileExist(false);
+                pickImage("profile");
+              }}
+              styles={"relative"}
+              advancedIcon={fetchProfile}
+              onLoad={() => {
+                setIsProfileLoading(false);
+              }}
+              extraIconStyle={{ width: width * 0.35, height: width * 0.35 }}
+              iconStyle={"rounded-full bg-gray-200 border-4 border-white"}
+              label="Edit"
+              textStyle={
+                "text-white text-sm font-medium absolute bottom-3 right-3 bg-gray-900 p-3 rounded-full shadow-xl"
+              }
+            />
+          ) : (
+            <CustomButton
+              onPress={() => pickImage("profile")}
+              styles={"relative"}
+              icon={{ uri: profileData.profilePic }}
+              extraIconStyle={{ width: width * 0.35, height: width * 0.35 }}
+              iconStyle={"rounded-full bg-gray-200 border-4 border-white"}
+              label="Edit"
+              textStyle={
+                "text-white text-sm font-medium absolute bottom-3 right-3 bg-gray-900 p-3 rounded-full shadow-xl"
+              }
+            />
+          )}
         </View>
+
+        {/* <View>
+          <AdvancedImage
+            cldImg={profile}
+            style={{ width: 200, height: 200, alignSelf: "center" }}
+          />
+        </View> */}
 
         {/* Form Container */}
         <View className="bg-white rounded-3xl p-6 shadow-sm mb-12">
