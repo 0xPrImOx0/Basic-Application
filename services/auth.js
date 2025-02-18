@@ -51,18 +51,29 @@ export async function createAccount(email, password, fullName) {
 
   console.log("FILE REACHED HERE");
 
-  const { data: bucketData, error: bucketError } = await supabase.storage
-    .from("user-uploads") // Ensure this bucket exists in Supabase
-    .upload(folderPath, file, {
-      cacheControl: "3600",
-      upsert: false,
-    });
+  try {
+    const { data, error } = await supabase.storage.listBuckets();
 
-  console.log("Upload Response:", bucketData, bucketError);
+    console.log("FETCHING BUCKKKETTT:", data, error);
 
-  if (bucketError) {
-    console.error("Upload Error:", bucketError);
-    return { user: logInUser, error: bucketError };
+    console.log("Starting file upload...");
+
+    const { data: bucketData, error: bucketError } = await supabase.storage
+      .from("userUploads")
+      .upload(folderPath, file, {
+        cacheControl: "3600",
+        upsert: false,
+      });
+
+    console.log("UPLOAD RESPONSE:", bucketData, bucketError);
+
+    if (bucketError) {
+      console.error("Upload Error:", bucketError);
+      return { user: logInUser, error: bucketError };
+    }
+  } catch (e) {
+    console.error("Unexpected Upload Error:", e);
+    return { user: logInUser, error: e.message };
   }
 
   return { user: logInUser, bucket: bucketData, error: null };

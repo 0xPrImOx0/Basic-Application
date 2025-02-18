@@ -21,7 +21,10 @@ import useUpdateProfile from "../../../services/useUpdateProfile";
 import useFetchData from "../../../services/useFetchData";
 import Toast from "react-native-toast-message";
 import CustomLoader from "../../../components/CustomLoader";
-import { ref } from "yup";
+import { AdvancedImage } from "cloudinary-react-native";
+import axios from "axios";
+import cld from "../../../lib/cloudinary";
+import CryptoJS from "crypto-js";
 
 const { width } = Dimensions.get("window");
 const COVER_HEIGHT = width * 0.5625; // 16:9 aspect ratio
@@ -82,6 +85,7 @@ const formatToWordDate = (dateStr) => {
 
 const editProfile = () => {
   const { session } = useAuth();
+  const [imageUri, setImageUri] = useState(null);
 
   const [isDobDirty, setIsDobDirty] = useState(true);
   const [profileData, setProfileData] = useState({
@@ -148,7 +152,10 @@ const editProfile = () => {
         const { status } =
           await ImagePicker.requestMediaLibraryPermissionsAsync();
         if (status !== "granted") {
-          alert("Sorry, we need camera roll permissions to make this work!");
+          Toast.show({
+            type: "error",
+            text1: "Sorry, we need camera roll permissions to make this work!",
+          });
         }
       }
     };
@@ -160,6 +167,9 @@ const editProfile = () => {
   useEffect(() => {
     const fetchProfile = async () => {
       const { data } = await useFetchProfileInfo({ session });
+      if (session) {
+        setImageUri(session.user.id);
+      }
       console.log("DATA RECEIVED HERE IN ASYNC:", data);
 
       setValue("school", data.university);
@@ -195,7 +205,10 @@ const editProfile = () => {
       console.log("THIS IS THEE RESULT DATA OF PROFILES: ", result);
     } catch (error) {
       console.error("Error picking image:", error);
-      alert("Error picking image. Please try again.");
+      Toast.show({
+        type: "error",
+        text1: "Error picking image. Please try again.",
+      });
     }
   };
 
@@ -226,10 +239,20 @@ const editProfile = () => {
         });
         reset();
       } else {
-        return Toast.show({
+        Toast.show({
           type: "error",
           text1: result.error || "Failed to Update Profile Information!",
         });
+      }
+
+      if (isProfileDirty || isCoverDirty) {
+        if (isProfileDirty) {
+          await handleImageUpload(profileData.profilePic, "profile");
+        }
+
+        if (isCoverDirty) {
+          await handleImageUpload(profileData.coverPhoto, "cover");
+        }
       }
     } catch (err) {
       Toast.show({
@@ -239,7 +262,90 @@ const editProfile = () => {
     } finally {
       console.log("DONE PROCESSING");
       setRefresh(!refresh);
+      setIsCoverDirty(false);
+      setIsProfileDirty(false);
     }
+  };
+
+  // Function to delete existing image by public_id
+  const deleteImage = async (type) => {
+    const timestamp = Math.floor(Date.now() / 1000);
+    const signatureString = `public_id=${type}-${imageUri}&timestamp=${timestamp}${process.env.EXPO_PUBLIC_CLOUD_API_SECRET}`;
+
+    const signature = CryptoJS.SHA1(signatureString).toString(CryptoJS.enc.Hex);
+
+    const formData = new FormData();
+    formData.append("public_id", type + "-" + imageUri);
+    formData.append("api_key", process.env.EXPO_PUBLIC_CLOUD_API_KEY);
+    formData.append("timestamp", timestamp);
+    formData.append("signature", signature);
+
+    try {
+      const response = await axios.post(
+        `https://api.cloudinary.com/v1_1/${process.env.EXPO_PUBLIC_CLOUD_NAME}/image/destroy`,
+        formData,
+        { headers: { "Content-Type": "multipart/form-data" } }
+      );
+      console.log("Delete Response:", response.data);
+    } catch (error) {
+      console.error("Delete Error:", error);
+    }
+  };
+
+  // Function to upload the image
+  const uploadImageToCloudinary = async (uri, type) => {
+    const formData = new FormData();
+    formData.append("file", {
+      uri: uri,
+      type: "image/jpeg",
+      name: `${type}-${imageUri}.jpg`,
+    });
+    formData.append(
+      "upload_preset",
+      process.env.EXPO_PUBLIC_CLOUD_UPLOAD_PRESET
+    );
+    formData.append("public_id", type + "-" + imageUri);
+
+    try {
+      const response = await axios.post(
+        `https://api.cloudinary.com/v1_1/${process.env.EXPO_PUBLIC_CLOUD_NAME}/image/upload`,
+        formData,
+        { headers: { "Content-Type": "multipart/form-data" } }
+      );
+      console.log("Upload Response:", response.data);
+      Toast.show({
+        type: "success",
+        text1: "Upload Success",
+        text2: "Image uploaded successfully!",
+      });
+    } catch (error) {
+      console.error("Upload Error:", error);
+      Toast.show({
+        type: "error",
+        text1: "Upload Failed",
+        text2: "Failed to upload image",
+      });
+    }
+  };
+
+  // Main function to check, delete, and upload
+  const handleImageUpload = async (uri, type) => {
+    try {
+      // Check if the image already exists
+      const checkResponse = await axios.get(
+        `https://res.cloudinary.com/${process.env.EXPO_PUBLIC_CLOUD_NAME}/image/upload/${type}-${imageUri}.jpg`
+      );
+      console.log("CHECK RESPONSE: ", checkResponse.status);
+
+      if (checkResponse.status === 200) {
+        console.log("Image exists. Deleting old one...");
+        await deleteImage(type);
+      }
+    } catch (error) {
+      console.log("Image not found. Proceeding to upload.");
+    }
+    // Upload the new image
+    await uploadImageToCloudinary(uri, type);
   };
 
   useEffect(() => {
@@ -442,7 +548,9 @@ const editProfile = () => {
             onPress={() => {
               console.log("Dirty Fields:", dirtyFields);
 
-              Object.keys(dirtyFields).length > 0
+              Object.keys(dirtyFields).length > 0 ||
+              isCoverDirty ||
+              isProfileDirty
                 ? handleSubmit(onSubmit)() // Note the extra () to execute handleSubmit
                 : Toast.show({
                     type: "error",

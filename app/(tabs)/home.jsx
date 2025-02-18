@@ -10,9 +10,13 @@ import CourseCard from "../../components/CourseCard";
 import CustomButton from "../../components/CustomButton";
 import { router } from "expo-router";
 import { useAuth } from "../../services/auth-provider";
+import { AdvancedImage } from "cloudinary-react-native";
+import cld from "../../lib/cloudinary";
+import axios from "axios";
 
 const home = () => {
   const { session } = useAuth();
+  const [imageUri, setImageUri] = useState(null);
 
   useEffect(() => {
     if (!session) {
@@ -80,6 +84,31 @@ const home = () => {
   const closeCourseCard = () => {
     setIsButtonDisabled(false); // Enable the button when the gallery is closed
     setIsCourseCardVisible(false); // Hide the gallery
+  };
+
+  const uploadImageToCloudinary = async (uri) => {
+    const formData = new FormData();
+    formData.append("file", {
+      uri: uri,
+      type: "image/jpeg",
+      name: "upload.jpg",
+    });
+    formData.append("upload_preset", "user-uploads");
+    formData.append("cloud_name", "dyyks7im7");
+
+    try {
+      const response = await axios.post(
+        "https://api.cloudinary.com/v1_1/dyyks7im7/image/upload",
+        formData,
+        { headers: { "Content-Type": "multipart/form-data" } }
+      );
+      Alert.alert("Upload Success", "Image uploaded successfully!");
+      console.log("Cloudinary response:", response.data);
+      setImageUri(response.data.secure_url);
+    } catch (error) {
+      console.error("Upload Error:", error);
+      Alert.alert("Upload Failed", "Failed to upload image");
+    }
   };
 
   return (
